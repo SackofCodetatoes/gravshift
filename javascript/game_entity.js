@@ -4,6 +4,8 @@ class GameEntity {
     this.y = options.y;
     this.xLen = options.xLen;
     this.yLen = options.yLen;
+    this.vspd = 0;
+    this.hspd = 0;
     // this.canvas = options.canvas;
     this.context = options.context;
 

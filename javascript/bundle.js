@@ -213,6 +213,7 @@ class Game {
    this.context = options.context;
    this.platforms = [];
    this.entities = [];
+   this.physicsObjs = [];
 
    this.keyBind = this.keyBind.bind(this);
    this.getInput = this.getInput.bind(this);
@@ -241,6 +242,8 @@ class Game {
     this.platforms.push(this.platform);
     this.entities.push(this.platform);
     this.entities.push(this.player);
+
+    this.physicsObjs.push(this.player);
   }
 
 
@@ -275,10 +278,9 @@ class Game {
         viewPort.y += this.player.moveSpd;
       }
       else {
-        console.log('trigger')
         while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
+          console.log('trigger')
           this.player.y += 1;
-          
           viewPort.y += 1;
         }
       }
@@ -311,11 +313,15 @@ class Game {
         viewPort.x += this.player.moveSpd;
       }
       else {
-        while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
-          this.player.x -= 1;
-          viewPort.x -= 1;
+        while (!this.platformCollision(this.player.x + 1, this.player.y, this.player)) {
+          this.player.x += 1;
+          viewPort.x += 1;
         }
       }
+    }
+
+    if(this.playerInput[' '] && this.playerInput.canJump){
+      this.player.y -= 10;
     }
 
   }
@@ -344,6 +350,7 @@ class Game {
       ArrowUp: false,
       ArrowDown: false,
       ' ': false,
+      canJump: true,
     };
 
     //key press
@@ -351,19 +358,26 @@ class Game {
       // const keyName = event.key;
       if (PLAYER_KEYS.includes(event.key)) {
         this.playerInput[event.key] = true;
+        // if(event.key === ' '){
+        //   this.playerInput.canJump = false;
+        // }
       }
     });
     // key release
     document.addEventListener('keyup', (event) => {
       if (PLAYER_KEYS.includes(event.key)) {
         this.playerInput[event.key] = false;
-
       }
     });
   }
 
   applyGravity(){
     //iterate over list of entities and apply gravity
+    for(let i = 0; i < this.physicsObjs.length; i++){
+      if(this.physicsObjs[i].vspd < 6){
+        this.physicsObjs[i].vspd += 0.2;
+      }
+    }
   }
 
 }
@@ -387,6 +401,8 @@ class GameEntity {
     this.y = options.y;
     this.xLen = options.xLen;
     this.yLen = options.yLen;
+    this.vspd = 0;
+    this.hspd = 0;
     // this.canvas = options.canvas;
     this.context = options.context;
 
