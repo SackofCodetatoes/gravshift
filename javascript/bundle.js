@@ -215,6 +215,8 @@ class Game {
    this.entities = [];
 
    this.keyBind = this.keyBind.bind(this);
+   this.getInput = this.getInput.bind(this);
+   this.platformCollision = this.platformCollision.bind(this);
   }
 
 
@@ -234,9 +236,11 @@ class Game {
     this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
     // this.player.keyBind();
     this.keyBind()
-    this.test = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](playerConfig);
+    
     this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
     this.platforms.push(this.platform);
+    this.entities.push(this.platform);
+    this.entities.push(this.player);
   }
 
 
@@ -244,32 +248,79 @@ class Game {
     //each game step
     viewPort.x = this.player.x - (1280 / 2);
     viewPort.y = this.player.y - (720 / 2);
-    this.player.update(viewPort);
-    if(this.playerInput.ArrowDown){
-      this.player.y += this.player.moveSpd;
-      viewPort.y += this.player.moveSpd;
-    }
-    if(this.playerInput.ArrowUp){
-      this.player.y -= this.player.moveSpd;
-      viewPort.y -= this.player.moveSpd;
-    }
-    if(this.playerInput.ArrowLeft){
-      this.player.x -= this.player.moveSpd;
-      viewPort.x -= this.player.moveSpd;
-    }
-    if(this.playerInput.ArrowRight){
-      this.player.x += this.player.moveSpd;
-      viewPort.x += this.player.moveSpd;
-    }
+    // this.player.update(viewPort);
 
+    this.getInput(viewPort);
+    
     this.camera.x = this.player.x - (1280 / 2);
     this.camera.y = this.player.y - (720 / 2);
-    this.platform.update(viewPort);
-    this.test.update(viewPort);
-    this.camera.update(viewPort);
+
+
+    for(let i = 0; i < this.entities.length; i++){
+      this.entities[i].update(viewPort);
+    }
+
+    // this.platform.update(viewPort);
+    // this.camera.update(viewPort);
 
 
   }
+
+
+
+  getInput(viewPort){
+    if (this.playerInput.ArrowDown) {
+      if(!this.platformCollision(this.player.x, this.player.y + this.player.moveSpd, this.player)){
+        this.player.y += this.player.moveSpd;
+        viewPort.y += this.player.moveSpd;
+      }
+      else {
+        console.log('trigger')
+        while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
+          this.player.y += 1;
+          
+          viewPort.y += 1;
+        }
+      }
+    }
+    if (this.playerInput.ArrowUp) {
+      if (!this.platformCollision(this.player.x, this.player.y - this.player.moveSpd, this.player)) {
+        this.player.y -= this.player.moveSpd;
+        viewPort.y -= this.player.moveSpd;
+      } else {
+        while (!this.platformCollision(this.player.x, this.player.y - 1, this.player)) {
+          this.player.y -= 1;
+          viewPort.y -= 1;
+        }
+      }
+    }
+    if (this.playerInput.ArrowLeft) {
+      if (!this.platformCollision(this.player.x - this.player.moveSpd, this.player.y, this.player)) {
+        this.player.x -= this.player.moveSpd;
+        viewPort.x -= this.player.moveSpd;
+      } else {
+        while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
+          this.player.x -= 1;
+          viewPort.x -= 1;
+        }
+      }
+    }
+    if (this.playerInput.ArrowRight) {
+      if (!this.platformCollision(this.player.x + this.player.moveSpd, this.player.y, this.player)) {
+        this.player.x += this.player.moveSpd;
+        viewPort.x += this.player.moveSpd;
+      }
+      else {
+        while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
+          this.player.x -= 1;
+          viewPort.x -= 1;
+        }
+      }
+    }
+
+  }
+
+
 
   platformCollision(x, y, obj){
   //check if new position overlaps with any platforms in platforms entitity
@@ -277,10 +328,9 @@ class Game {
       // obj.positionMeeting(obj.x, obj.y, platforms[i]);
       if (
         (
-          (obj.x + obj.xLen > this.platforms[i].x && obj.x < this.platforms[i].x + this.platforms[i].xLen) &&
-          (obj.y + obj.yLen > this.platforms[i].y && obj.y < this.platforms[i].y + this.platforms[i].yLen))
+          (x + obj.xLen > this.platforms[i].x && x < this.platforms[i].x + this.platforms[i].xLen) &&
+          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen))
       ) {
-        console.log('ow')
         return true;
       }
     }
