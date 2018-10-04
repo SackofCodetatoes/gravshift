@@ -6,6 +6,7 @@ class Player extends GameEntity {
   constructor(options){
     super(options);
     this.moveSpd = 4;
+    this.game = options.game;
     this.platformCollision = options.platformCollision;
     this.takeInput = this.takeInput.bind(this);
   }
@@ -18,6 +19,7 @@ class Player extends GameEntity {
       ArrowDown: false,
       ' ': false,
       canJump: true,
+      canInvert: true,
     };
 
     const canvas = document.getElementById('game-canvas');
@@ -52,13 +54,19 @@ class Player extends GameEntity {
     }
 
     if(this.playerInput[' '] && this.playerInput.canJump){
-      this.vspd = -5;
+      this.vspd = 8 * -this.game.gravDir;
+      this.playerInput.canJump = false;
+    }
+    if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
+      console.log('clcik')
+      this.game.gravDir = this.game.gravDir * -1;
+      this.playerInput.canInvert = false;
     }
   }
 
   update(viewPort){
+    // console.log(this.playerInput.canInvert, this.playerInput.canJump);
     this.takeInput();
-    console.log(this.vspd);
 
     if(!this.platformCollision(this.x + this.hspd, this.y, this)){
       this.x += this.hspd;
@@ -77,14 +85,18 @@ class Player extends GameEntity {
       this.y += this.vspd;
     } 
     else {
-      this.vspd = 0;
       let sign = 1;
       this.vspd < 0 ? sign = -1 : sign = sign; 
       while(!this.platformCollision(this.x, this.y + sign, this)){
-        debugger
-        console.log('notgood')
         this.y += sign;
       }
+
+      //reset jump limit
+      if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+        this.playerInput.canJump = true;
+        this.playerInput.canInvert = true;
+      }
+
       this.vspd = 0;
     }
     

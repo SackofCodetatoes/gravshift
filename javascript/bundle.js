@@ -215,8 +215,8 @@ class Game {
    this.entities = [];
    this.physicsObjs = [];
 
-   this.keyBind = this.keyBind.bind(this);
-   this.getInput = this.getInput.bind(this);
+   this.gravDir = 1;
+
    this.platformCollision = this.platformCollision.bind(this);
   }
 
@@ -229,6 +229,7 @@ class Game {
       xLen: 25,
       yLen: 25,
       context: this.context,
+      game: this,
     }
 
     // this.keyBind()
@@ -237,9 +238,13 @@ class Game {
     this.platforms.push(this.platform);
     this.entities.push(this.platform);
 
-    this.platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 300, y: 0, xLen: 25, yLen: 200, context: this.context})
+    this.platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 400, y: 0, xLen: 25, yLen: 200, context: this.context})
     this.platforms.push(this.platform2);
     this.entities.push(this.platform2);
+
+    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 225, yLen: 25, context: this.context})
+    this.platforms.push(this.platform3);
+    this.entities.push(this.platform3);
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
     this.camera = new _camera_js__WEBPACK_IMPORTED_MODULE_1__["default"](playerConfig);
@@ -260,83 +265,17 @@ class Game {
     //each game step
     viewPort.x = this.player.x - (1280 / 2);
     viewPort.y = this.player.y - (720 / 2);
-    // this.player.update(viewPort);
     
     this.applyGravity();
-    // this.getInput(viewPort);
     
     this.camera.x = this.player.x - (1280 / 2);
     this.camera.y = this.player.y - (720 / 2);
-
 
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
     }
 
-    // this.platform.update(viewPort);
-    // this.camera.update(viewPort);
-
-
   }
-
-
-
-  getInput(viewPort){
-    // if (this.playerInput.ArrowDown) {
-    //   if(!this.platformCollision(this.player.x, this.player.y + this.player.moveSpd, this.player)){
-    //     this.player.y += this.player.moveSpd;
-    //     viewPort.y += this.player.moveSpd;
-    //   }
-    //   else {
-    //     while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
-    //       console.log('trigger')
-    //       this.player.y += 1;
-    //       viewPort.y += 1;
-    //     }
-    //   }
-    // }
-    // if (this.playerInput.ArrowUp) {
-    //   if (!this.platformCollision(this.player.x, this.player.y - this.player.moveSpd, this.player)) {
-    //     this.player.y -= this.player.moveSpd;
-    //     viewPort.y -= this.player.moveSpd;
-    //   } else {
-    //     while (!this.platformCollision(this.player.x, this.player.y - 1, this.player)) {
-    //       this.player.y -= 1;
-    //       viewPort.y -= 1;
-    //     }
-    //   }
-    // }
-    // if (this.playerInput.ArrowLeft) {
-    //   if (!this.platformCollision(this.player.x - this.player.moveSpd, this.player.y, this.player)) {
-    //     this.player.x -= this.player.moveSpd;
-    //     viewPort.x -= this.player.moveSpd;
-    //   } else {
-    //     while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
-    //       this.player.x -= 1;
-    //       viewPort.x -= 1;
-    //     }
-    //   }
-    // }
-    // if (this.playerInput.ArrowRight) {
-    //   if (!this.platformCollision(this.player.x + this.player.moveSpd, this.player.y, this.player)) {
-    //     this.player.x += this.player.moveSpd;
-    //     viewPort.x += this.player.moveSpd;
-    //   }
-    //   else {
-    //     while (!this.platformCollision(this.player.x + 1, this.player.y, this.player)) {
-    //       this.player.x += 1;
-    //       viewPort.x += 1;
-    //     }
-    //   }
-    // }
-
-    // if(this.playerInput[' '] && this.playerInput.canJump){
-    //   this.player.y -= 10;
-    // }
-
-  }
-
-
 
   platformCollision(x, y, obj){
   //check if new position overlaps with any platforms in platforms entitity
@@ -353,40 +292,22 @@ class Game {
     return false;
   }
 
-  keyBind(){
-    this.playerInput = {
-      ArrowLeft: false,
-      ArrowRight: false,
-      ArrowUp: false,
-      ArrowDown: false,
-      ' ': false,
-      canJump: true,
-    };
-
-    //key press
-    document.addEventListener('keydown', (event) => {
-      // const keyName = event.key;
-      if (PLAYER_KEYS.includes(event.key)) {
-        this.playerInput[event.key] = true;
-        // if(event.key === ' '){
-        //   this.playerInput.canJump = false;
-        // }
-      }
-    });
-    // key release
-    document.addEventListener('keyup', (event) => {
-      if (PLAYER_KEYS.includes(event.key)) {
-        this.playerInput[event.key] = false;
-      }
-    });
-  }
 
   applyGravity(){
     //iterate over list of entities and apply gravity
     for(let i = 0; i < this.physicsObjs.length; i++){
       let curObj = this.physicsObjs[i];
-      if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
-        curObj.vspd += 0.2;
+      
+      //normal gravity
+      if(this.gravDir > 0){
+        if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
+          curObj.vspd += 0.2;
+        }
+      }
+      else {
+        if(curObj.vspd > -6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)) {
+          curObj.vspd -= 0.2;
+        }
       }
     }
   }
@@ -486,6 +407,7 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(options){
     super(options);
     this.moveSpd = 4;
+    this.game = options.game;
     this.platformCollision = options.platformCollision;
     this.takeInput = this.takeInput.bind(this);
   }
@@ -498,6 +420,7 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       ArrowDown: false,
       ' ': false,
       canJump: true,
+      canInvert: true,
     };
 
     const canvas = document.getElementById('game-canvas');
@@ -532,13 +455,19 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     }
 
     if(this.playerInput[' '] && this.playerInput.canJump){
-      this.vspd = -5;
+      this.vspd = 8 * -this.game.gravDir;
+      this.playerInput.canJump = false;
+    }
+    if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
+      console.log('clcik')
+      this.game.gravDir = this.game.gravDir * -1;
+      this.playerInput.canInvert = false;
     }
   }
 
   update(viewPort){
+    // console.log(this.playerInput.canInvert, this.playerInput.canJump);
     this.takeInput();
-    console.log(this.vspd);
 
     if(!this.platformCollision(this.x + this.hspd, this.y, this)){
       this.x += this.hspd;
@@ -557,14 +486,18 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       this.y += this.vspd;
     } 
     else {
-      this.vspd = 0;
       let sign = 1;
       this.vspd < 0 ? sign = -1 : sign = sign; 
       while(!this.platformCollision(this.x, this.y + sign, this)){
-        debugger
-        console.log('notgood')
         this.y += sign;
       }
+
+      //reset jump limit
+      if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+        this.playerInput.canJump = true;
+        this.playerInput.canInvert = true;
+      }
+
       this.vspd = 0;
     }
     
