@@ -30,19 +30,28 @@ class Game {
       yLen: 25,
       context: this.context,
     }
+
+    // this.keyBind()
+    
+    this.platform = new Platform({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
+    this.platforms.push(this.platform);
+    this.entities.push(this.platform);
+
+    this.platform2 = new Platform({x: 300, y: 0, xLen: 25, yLen: 200, context: this.context})
+    this.platforms.push(this.platform2);
+    this.entities.push(this.platform2);
+
     this.player = new Player(playerConfig);
     this.camera = new Camera(playerConfig);
     this.camera.x = 0;
     this.camera.y = 0;
     this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
-    // this.player.keyBind();
-    this.keyBind()
-    
-    this.platform = new Platform({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
-    this.platforms.push(this.platform);
-    this.entities.push(this.platform);
-    this.entities.push(this.player);
 
+    this.player.platformCollision = this.platformCollision;
+    this.player.keyBind();
+
+    this.entities.push(this.player);
+    
     this.physicsObjs.push(this.player);
   }
 
@@ -52,8 +61,9 @@ class Game {
     viewPort.x = this.player.x - (1280 / 2);
     viewPort.y = this.player.y - (720 / 2);
     // this.player.update(viewPort);
-
-    this.getInput(viewPort);
+    
+    this.applyGravity();
+    // this.getInput(viewPort);
     
     this.camera.x = this.player.x - (1280 / 2);
     this.camera.y = this.player.y - (720 / 2);
@@ -72,57 +82,57 @@ class Game {
 
 
   getInput(viewPort){
-    if (this.playerInput.ArrowDown) {
-      if(!this.platformCollision(this.player.x, this.player.y + this.player.moveSpd, this.player)){
-        this.player.y += this.player.moveSpd;
-        viewPort.y += this.player.moveSpd;
-      }
-      else {
-        while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
-          console.log('trigger')
-          this.player.y += 1;
-          viewPort.y += 1;
-        }
-      }
-    }
-    if (this.playerInput.ArrowUp) {
-      if (!this.platformCollision(this.player.x, this.player.y - this.player.moveSpd, this.player)) {
-        this.player.y -= this.player.moveSpd;
-        viewPort.y -= this.player.moveSpd;
-      } else {
-        while (!this.platformCollision(this.player.x, this.player.y - 1, this.player)) {
-          this.player.y -= 1;
-          viewPort.y -= 1;
-        }
-      }
-    }
-    if (this.playerInput.ArrowLeft) {
-      if (!this.platformCollision(this.player.x - this.player.moveSpd, this.player.y, this.player)) {
-        this.player.x -= this.player.moveSpd;
-        viewPort.x -= this.player.moveSpd;
-      } else {
-        while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
-          this.player.x -= 1;
-          viewPort.x -= 1;
-        }
-      }
-    }
-    if (this.playerInput.ArrowRight) {
-      if (!this.platformCollision(this.player.x + this.player.moveSpd, this.player.y, this.player)) {
-        this.player.x += this.player.moveSpd;
-        viewPort.x += this.player.moveSpd;
-      }
-      else {
-        while (!this.platformCollision(this.player.x + 1, this.player.y, this.player)) {
-          this.player.x += 1;
-          viewPort.x += 1;
-        }
-      }
-    }
+    // if (this.playerInput.ArrowDown) {
+    //   if(!this.platformCollision(this.player.x, this.player.y + this.player.moveSpd, this.player)){
+    //     this.player.y += this.player.moveSpd;
+    //     viewPort.y += this.player.moveSpd;
+    //   }
+    //   else {
+    //     while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
+    //       console.log('trigger')
+    //       this.player.y += 1;
+    //       viewPort.y += 1;
+    //     }
+    //   }
+    // }
+    // if (this.playerInput.ArrowUp) {
+    //   if (!this.platformCollision(this.player.x, this.player.y - this.player.moveSpd, this.player)) {
+    //     this.player.y -= this.player.moveSpd;
+    //     viewPort.y -= this.player.moveSpd;
+    //   } else {
+    //     while (!this.platformCollision(this.player.x, this.player.y - 1, this.player)) {
+    //       this.player.y -= 1;
+    //       viewPort.y -= 1;
+    //     }
+    //   }
+    // }
+    // if (this.playerInput.ArrowLeft) {
+    //   if (!this.platformCollision(this.player.x - this.player.moveSpd, this.player.y, this.player)) {
+    //     this.player.x -= this.player.moveSpd;
+    //     viewPort.x -= this.player.moveSpd;
+    //   } else {
+    //     while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
+    //       this.player.x -= 1;
+    //       viewPort.x -= 1;
+    //     }
+    //   }
+    // }
+    // if (this.playerInput.ArrowRight) {
+    //   if (!this.platformCollision(this.player.x + this.player.moveSpd, this.player.y, this.player)) {
+    //     this.player.x += this.player.moveSpd;
+    //     viewPort.x += this.player.moveSpd;
+    //   }
+    //   else {
+    //     while (!this.platformCollision(this.player.x + 1, this.player.y, this.player)) {
+    //       this.player.x += 1;
+    //       viewPort.x += 1;
+    //     }
+    //   }
+    // }
 
-    if(this.playerInput[' '] && this.playerInput.canJump){
-      this.player.y -= 10;
-    }
+    // if(this.playerInput[' '] && this.playerInput.canJump){
+    //   this.player.y -= 10;
+    // }
 
   }
 
@@ -174,8 +184,9 @@ class Game {
   applyGravity(){
     //iterate over list of entities and apply gravity
     for(let i = 0; i < this.physicsObjs.length; i++){
-      if(this.physicsObjs[i].vspd < 6){
-        this.physicsObjs[i].vspd += 0.2;
+      let curObj = this.physicsObjs[i];
+      if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
+        curObj.vspd += 0.2;
       }
     }
   }

@@ -6,7 +6,8 @@ class Player extends GameEntity {
   constructor(options){
     super(options);
     this.moveSpd = 4;
-
+    this.platformCollision = options.platformCollision;
+    this.takeInput = this.takeInput.bind(this);
   }
 
   keyBind() {
@@ -16,6 +17,7 @@ class Player extends GameEntity {
       ArrowUp: false, 
       ArrowDown: false,
       ' ': false,
+      canJump: true,
     };
 
     const canvas = document.getElementById('game-canvas');
@@ -31,9 +33,9 @@ class Player extends GameEntity {
     document.addEventListener('keyup', (event) => {
       if (PLAYER_KEYS.includes(event.key)) {
         this.playerInput[event.key] = false;
-
       }
     });
+
   }// end of keybind
 
   draw(viewPort){
@@ -41,25 +43,52 @@ class Player extends GameEntity {
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, 25, 25);
   }
 
-  update(viewPort){
-    // if(this.playerInput.ArrowDown){
-    //   this.y += this.moveSpd;
-    //   viewPort.y += this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowUp){
-    //   this.y -= this.moveSpd;
-    //   viewPort.y -= this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowLeft){
-    //   this.x -= this.moveSpd;
-    //   viewPort.x -= this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowRight){
-    //   this.x += this.moveSpd;
-    //   viewPort.x += this.moveSpd;
-    // }
-      // console.log(viewPort);
+  takeInput(viewPort){
+    if (this.playerInput.ArrowLeft) {     
+        this.hspd = -this.moveSpd;
+    }
+    if (this.playerInput.ArrowRight) {
+        this.hspd = this.moveSpd;
+    }
 
+    if(this.playerInput[' '] && this.playerInput.canJump){
+      this.vspd = -5;
+    }
+  }
+
+  update(viewPort){
+    this.takeInput();
+    console.log(this.vspd);
+
+    if(!this.platformCollision(this.x + this.hspd, this.y, this)){
+      this.x += this.hspd;
+    } 
+    else {
+      let sign = 1;
+      this.hspd < 0 ? sign = -1 : sign = sign; 
+      while(!this.platformCollision(this.x + sign * 1, this.y, this)){
+        this.x += sign;
+      }
+    }
+
+    this.hspd = 0;
+
+    if(!this.platformCollision(this.x, this.y + this.vspd, this)){
+      this.y += this.vspd;
+    } 
+    else {
+      this.vspd = 0;
+      let sign = 1;
+      this.vspd < 0 ? sign = -1 : sign = sign; 
+      while(!this.platformCollision(this.x, this.y + sign, this)){
+        debugger
+        console.log('notgood')
+        this.y += sign;
+      }
+      this.vspd = 0;
+    }
+    
+    
 
     this.draw(viewPort);
   }
