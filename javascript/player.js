@@ -6,8 +6,11 @@ class Player extends GameEntity {
   constructor(options){
     super(options);
     this.moveSpd = 4;
+    this.jumpSpd = 6;
     this.game = options.game;
     this.platformCollision = options.platformCollision;
+
+
     this.takeInput = this.takeInput.bind(this);
   }
 
@@ -54,52 +57,25 @@ class Player extends GameEntity {
     }
 
     if(this.playerInput[' '] && this.playerInput.canJump){
-      this.vspd = 8 * -this.game.gravDir;
+      this.vspd = this.jumpSpd * -this.game.gravDir;
       this.playerInput.canJump = false;
     }
     if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
-      console.log('clcik')
       this.game.gravDir = this.game.gravDir * -1;
       this.playerInput.canInvert = false;
     }
   }
 
   update(viewPort){
-    // console.log(this.playerInput.canInvert, this.playerInput.canJump);
     this.takeInput();
 
-    if(!this.platformCollision(this.x + this.hspd, this.y, this)){
-      this.x += this.hspd;
-    } 
-    else {
-      let sign = 1;
-      this.hspd < 0 ? sign = -1 : sign = sign; 
-      while(!this.platformCollision(this.x + sign * 1, this.y, this)){
-        this.x += sign;
-      }
-    }
-
-    this.hspd = 0;
-
-    if(!this.platformCollision(this.x, this.y + this.vspd, this)){
-      this.y += this.vspd;
-    } 
-    else {
-      let sign = 1;
-      this.vspd < 0 ? sign = -1 : sign = sign; 
-      while(!this.platformCollision(this.x, this.y + sign, this)){
-        this.y += sign;
-      }
-
-      //reset jump limit
-      if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
-        this.playerInput.canJump = true;
-        this.playerInput.canInvert = true;
-      }
-
-      this.vspd = 0;
-    }
+    this.stepCollisionCheck();
     
+    //reset jump limit
+    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+      this.playerInput.canJump = true;
+      this.playerInput.canInvert = true;
+    }
     
 
     this.draw(viewPort);

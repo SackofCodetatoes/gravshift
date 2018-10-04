@@ -230,11 +230,13 @@ class Game {
       yLen: 25,
       context: this.context,
       game: this,
+      platformCollision: this.platformCollision,
+      physicsObj: true,
     }
 
-    // this.keyBind()
-    
-    this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
+
+    //put all these in a seed file and use call/apply 
+    this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 600, yLen: 25, context: this.context})
     this.platforms.push(this.platform);
     this.entities.push(this.platform);
 
@@ -242,9 +244,15 @@ class Game {
     this.platforms.push(this.platform2);
     this.entities.push(this.platform2);
 
-    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 225, yLen: 25, context: this.context})
+    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 725, yLen: 25, context: this.context})
     this.platforms.push(this.platform3);
     this.entities.push(this.platform3);
+
+    this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, playerConfig, {x: 255, y: 205}));
+    this.entities.push(this.box);
+    this.physicsObjs.push(this.box);
+    this.platforms.push(this.box);
+
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
     this.camera = new _camera_js__WEBPACK_IMPORTED_MODULE_1__["default"](playerConfig);
@@ -252,8 +260,9 @@ class Game {
     this.camera.y = 0;
     this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
 
-    this.player.platformCollision = this.platformCollision;
     this.player.keyBind();
+
+    // this.player.platformCollision = this.platformCollision;
 
     this.entities.push(this.player);
     
@@ -335,10 +344,14 @@ class GameEntity {
     this.yLen = options.yLen;
     this.vspd = 0;
     this.hspd = 0;
-    // this.canvas = options.canvas;
-    this.context = options.context;
+    this.physicsObj = false || options.physicsObj;
 
+    this.context = options.context;
+    this.platformCollision = options.platformCollision;
+
+    
     this.draw = this.draw.bind(this);
+    this.stepCollisionCheck = this.stepCollisionCheck.bind(this);
   }
 
   draw(viewPort){
@@ -348,7 +361,37 @@ class GameEntity {
   }
 
   update(viewPort){
+    if(this.physicsObj){
+      this.stepCollisionCheck();
+    }
     this.draw(viewPort);
+  }
+
+  stepCollisionCheck(){
+    if (!this.platformCollision(this.x + this.hspd, this.y, this)) {
+      this.x += this.hspd;
+    } else {
+      let sign = 1;
+      this.hspd < 0 ? sign = -1 : sign = sign;
+      while (!this.platformCollision(this.x + sign * 1, this.y, this)) {
+        this.x += sign;
+      }
+    }
+
+    this.hspd = 0;
+
+    if (!this.platformCollision(this.x, this.y + this.vspd, this)) {
+      this.y += this.vspd;
+    } else {
+      let sign = 1;
+      this.vspd < 0 ? sign = -1 : sign = sign;
+      while (!this.platformCollision(this.x, this.y + sign, this)) {
+        this.y += sign;
+      }
+
+
+      this.vspd = 0;
+    }
   }
 
   positionMeeting(x, y, obj){
@@ -407,8 +450,11 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(options){
     super(options);
     this.moveSpd = 4;
+    this.jumpSpd = 6;
     this.game = options.game;
     this.platformCollision = options.platformCollision;
+
+
     this.takeInput = this.takeInput.bind(this);
   }
 
@@ -455,52 +501,25 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     }
 
     if(this.playerInput[' '] && this.playerInput.canJump){
-      this.vspd = 8 * -this.game.gravDir;
+      this.vspd = this.jumpSpd * -this.game.gravDir;
       this.playerInput.canJump = false;
     }
     if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
-      console.log('clcik')
       this.game.gravDir = this.game.gravDir * -1;
       this.playerInput.canInvert = false;
     }
   }
 
   update(viewPort){
-    // console.log(this.playerInput.canInvert, this.playerInput.canJump);
     this.takeInput();
 
-    if(!this.platformCollision(this.x + this.hspd, this.y, this)){
-      this.x += this.hspd;
-    } 
-    else {
-      let sign = 1;
-      this.hspd < 0 ? sign = -1 : sign = sign; 
-      while(!this.platformCollision(this.x + sign * 1, this.y, this)){
-        this.x += sign;
-      }
-    }
-
-    this.hspd = 0;
-
-    if(!this.platformCollision(this.x, this.y + this.vspd, this)){
-      this.y += this.vspd;
-    } 
-    else {
-      let sign = 1;
-      this.vspd < 0 ? sign = -1 : sign = sign; 
-      while(!this.platformCollision(this.x, this.y + sign, this)){
-        this.y += sign;
-      }
-
-      //reset jump limit
-      if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
-        this.playerInput.canJump = true;
-        this.playerInput.canInvert = true;
-      }
-
-      this.vspd = 0;
-    }
+    this.stepCollisionCheck();
     
+    //reset jump limit
+    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+      this.playerInput.canJump = true;
+      this.playerInput.canInvert = true;
+    }
     
 
     this.draw(viewPort);
