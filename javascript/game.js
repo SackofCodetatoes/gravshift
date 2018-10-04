@@ -13,6 +13,8 @@ class Game {
    this.context = options.context;
    this.platforms = [];
    this.entities = [];
+
+   this.keyBind = this.keyBind.bind(this);
   }
 
 
@@ -31,7 +33,7 @@ class Game {
     this.camera.y = 0;
     this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
     // this.player.keyBind();
-
+    this.keyBind()
     this.test = new GameEntity(playerConfig);
     this.platform = new Platform({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
     this.platforms.push(this.platform);
@@ -43,13 +45,30 @@ class Game {
     viewPort.x = this.player.x - (1280 / 2);
     viewPort.y = this.player.y - (720 / 2);
     this.player.update(viewPort);
-
+    if(this.playerInput.ArrowDown){
+      this.player.y += this.player.moveSpd;
+      viewPort.y += this.player.moveSpd;
+    }
+    if(this.playerInput.ArrowUp){
+      this.player.y -= this.player.moveSpd;
+      viewPort.y -= this.player.moveSpd;
+    }
+    if(this.playerInput.ArrowLeft){
+      this.player.x -= this.player.moveSpd;
+      viewPort.x -= this.player.moveSpd;
+    }
+    if(this.playerInput.ArrowRight){
+      this.player.x += this.player.moveSpd;
+      viewPort.x += this.player.moveSpd;
+    }
 
     this.camera.x = this.player.x - (1280 / 2);
     this.camera.y = this.player.y - (720 / 2);
     this.platform.update(viewPort);
     this.test.update(viewPort);
     this.camera.update(viewPort);
+
+
   }
 
   platformCollision(x, y, obj){
