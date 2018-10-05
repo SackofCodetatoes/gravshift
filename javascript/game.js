@@ -51,7 +51,6 @@ class Game {
     this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
     this.entities.push(this.box);
     this.physicsObjs.push(this.box);
-    this.platforms.push(this.box);
 
 
     this.player = new Player(playerConfig);

@@ -251,7 +251,6 @@ class Game {
     this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, playerConfig, {x: 255, y: 205}));
     this.entities.push(this.box);
     this.physicsObjs.push(this.box);
-    this.platforms.push(this.box);
 
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
