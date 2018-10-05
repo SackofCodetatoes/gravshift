@@ -214,10 +214,12 @@ class Game {
    this.platforms = [];
    this.entities = [];
    this.physicsObjs = [];
+   this.staticObjs = [];
 
    this.gravDir = 1;
 
    this.platformCollision = this.platformCollision.bind(this);
+   this.physicsCollision = this.physicsCollision.bind(this);
   }
 
 
@@ -232,6 +234,7 @@ class Game {
       game: this,
       platformCollision: this.platformCollision,
       physicsObj: true,
+      physicsCollision: this.physicsCollision,
     }
 
 
@@ -251,7 +254,7 @@ class Game {
     this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, playerConfig, {x: 255, y: 205}));
     this.entities.push(this.box);
     this.physicsObjs.push(this.box);
-    this.platforms.push(this.box);
+    // this.platforms.push(this.box);
 
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
@@ -285,6 +288,22 @@ class Game {
     }
 
   }
+  physicsCollision(x, y, obj){
+    //check collision with physics objs
+    for (let i = 0; i < this.physicsObjs.length; i++) {
+      // obj.positionMeeting(obj.x, obj.y, platforms[i]);
+      if (
+        (
+          (x + obj.xLen > this.physicsObjs[i].x && x < this.physicsObjs[i].x + this.physicsObjs[i].xLen) &&
+          (y + obj.yLen > this.physicsObjs[i].y && y < this.physicsObjs[i].y + this.physicsObjs[i].yLen) && 
+          obj != this.physicsObjs[i]
+        )
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   platformCollision(x, y, obj){
   //check if new position overlaps with any platforms in platforms entitity
@@ -293,7 +312,8 @@ class Game {
       if (
         (
           (x + obj.xLen > this.platforms[i].x && x < this.platforms[i].x + this.platforms[i].xLen) &&
-          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen))
+          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen)
+          )
       ) {
         return true;
       }
@@ -348,8 +368,9 @@ class GameEntity {
 
     this.context = options.context;
     this.platformCollision = options.platformCollision;
+    this.physicsCollision = options.physicsCollision;
 
-    
+
     this.draw = this.draw.bind(this);
     this.stepCollisionCheck = this.stepCollisionCheck.bind(this);
   }
@@ -368,24 +389,24 @@ class GameEntity {
   }
 
   stepCollisionCheck(){
-    if (!this.platformCollision(this.x + this.hspd, this.y, this)) {
+    if (!this.platformCollision(this.x + this.hspd, this.y, this) && !this.physicsCollision(this.x + this.hspd, this.y, this)) {
       this.x += this.hspd;
     } else {
       let sign = 1;
       this.hspd < 0 ? sign = -1 : sign = sign;
-      while (!this.platformCollision(this.x + sign * 1, this.y, this)) {
+      while (!this.platformCollision(this.x + sign, this.y, this) && !this.physicsCollision(this.x + sign, this.y, this)) {
         this.x += sign;
       }
     }
 
     this.hspd = 0;
 
-    if (!this.platformCollision(this.x, this.y + this.vspd, this)) {
+    if (!this.platformCollision(this.x, this.y + this.vspd, this) && !this.physicsCollision(this.x, this.y + this.vspd, this)) {
       this.y += this.vspd;
     } else {
       let sign = 1;
       this.vspd < 0 ? sign = -1 : sign = sign;
-      while (!this.platformCollision(this.x, this.y + sign, this)) {
+      while (!this.platformCollision(this.x, this.y + sign, this) && !this.physicsCollision(this.x, this.y + sign, this)) {
         this.y += sign;
       }
 
@@ -516,7 +537,7 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.stepCollisionCheck();
     
     //reset jump limit
-    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this) || this.physicsCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
       this.playerInput.canJump = true;
       this.playerInput.canInvert = true;
     }

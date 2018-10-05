@@ -72,7 +72,7 @@ class Player extends GameEntity {
     this.stepCollisionCheck();
     
     //reset jump limit
-    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this) || this.physicsCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
       this.playerInput.canJump = true;
       this.playerInput.canInvert = true;
     }

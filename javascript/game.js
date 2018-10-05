@@ -14,10 +14,12 @@ class Game {
    this.platforms = [];
    this.entities = [];
    this.physicsObjs = [];
+   this.staticObjs = [];
 
    this.gravDir = 1;
 
    this.platformCollision = this.platformCollision.bind(this);
+   this.physicsCollision = this.physicsCollision.bind(this);
   }
 
 
@@ -32,6 +34,7 @@ class Game {
       game: this,
       platformCollision: this.platformCollision,
       physicsObj: true,
+      physicsCollision: this.physicsCollision,
     }
 
 
@@ -51,7 +54,7 @@ class Game {
     this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
     this.entities.push(this.box);
     this.physicsObjs.push(this.box);
-    this.platforms.push(this.box);
+    // this.platforms.push(this.box);
 
 
     this.player = new Player(playerConfig);
@@ -85,6 +88,22 @@ class Game {
     }
 
   }
+  physicsCollision(x, y, obj){
+    //check collision with physics objs
+    for (let i = 0; i < this.physicsObjs.length; i++) {
+      // obj.positionMeeting(obj.x, obj.y, platforms[i]);
+      if (
+        (
+          (x + obj.xLen > this.physicsObjs[i].x && x < this.physicsObjs[i].x + this.physicsObjs[i].xLen) &&
+          (y + obj.yLen > this.physicsObjs[i].y && y < this.physicsObjs[i].y + this.physicsObjs[i].yLen) && 
+          obj != this.physicsObjs[i]
+        )
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   platformCollision(x, y, obj){
   //check if new position overlaps with any platforms in platforms entitity
@@ -93,7 +112,8 @@ class Game {
       if (
         (
           (x + obj.xLen > this.platforms[i].x && x < this.platforms[i].x + this.platforms[i].xLen) &&
-          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen))
+          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen)
+          )
       ) {
         return true;
       }
