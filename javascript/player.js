@@ -6,7 +6,12 @@ class Player extends GameEntity {
   constructor(options){
     super(options);
     this.moveSpd = 4;
+    this.jumpSpd = 6;
+    this.game = options.game;
+    this.platformCollision = options.platformCollision;
 
+
+    this.takeInput = this.takeInput.bind(this);
   }
 
   keyBind() {
@@ -16,6 +21,8 @@ class Player extends GameEntity {
       ArrowUp: false, 
       ArrowDown: false,
       ' ': false,
+      canJump: true,
+      canInvert: true,
     };
 
     const canvas = document.getElementById('game-canvas');
@@ -31,9 +38,9 @@ class Player extends GameEntity {
     document.addEventListener('keyup', (event) => {
       if (PLAYER_KEYS.includes(event.key)) {
         this.playerInput[event.key] = false;
-
       }
     });
+
   }// end of keybind
 
   draw(viewPort){
@@ -41,25 +48,35 @@ class Player extends GameEntity {
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, 25, 25);
   }
 
-  update(viewPort){
-    // if(this.playerInput.ArrowDown){
-    //   this.y += this.moveSpd;
-    //   viewPort.y += this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowUp){
-    //   this.y -= this.moveSpd;
-    //   viewPort.y -= this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowLeft){
-    //   this.x -= this.moveSpd;
-    //   viewPort.x -= this.moveSpd;
-    // }
-    // if(this.playerInput.ArrowRight){
-    //   this.x += this.moveSpd;
-    //   viewPort.x += this.moveSpd;
-    // }
-      // console.log(viewPort);
+  takeInput(viewPort){
+    if (this.playerInput.ArrowLeft) {     
+        this.hspd = -this.moveSpd;
+    }
+    if (this.playerInput.ArrowRight) {
+        this.hspd = this.moveSpd;
+    }
 
+    if(this.playerInput[' '] && this.playerInput.canJump){
+      this.vspd = this.jumpSpd * -this.game.gravDir;
+      this.playerInput.canJump = false;
+    }
+    if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
+      this.game.gravDir = this.game.gravDir * -1;
+      this.playerInput.canInvert = false;
+    }
+  }
+
+  update(viewPort){
+    this.takeInput();
+
+    this.stepCollisionCheck();
+    
+    //reset jump limit
+    if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this) || this.physicsCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
+      this.playerInput.canJump = true;
+      this.playerInput.canInvert = true;
+    }
+    
 
     this.draw(viewPort);
   }

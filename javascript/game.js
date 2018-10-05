@@ -14,10 +14,12 @@ class Game {
    this.platforms = [];
    this.entities = [];
    this.physicsObjs = [];
+   this.staticObjs = [];
 
-   this.keyBind = this.keyBind.bind(this);
-   this.getInput = this.getInput.bind(this);
+   this.gravDir = 1;
+
    this.platformCollision = this.platformCollision.bind(this);
+   this.physicsCollision = this.physicsCollision.bind(this);
   }
 
 
@@ -29,20 +31,44 @@ class Game {
       xLen: 25,
       yLen: 25,
       context: this.context,
+      game: this,
+      platformCollision: this.platformCollision,
+      physicsObj: true,
+      physicsCollision: this.physicsCollision,
     }
+
+
+    //put all these in a seed file and use call/apply 
+    this.platform = new Platform({x: 130, y: 300, xLen: 600, yLen: 25, context: this.context})
+    this.platforms.push(this.platform);
+    this.entities.push(this.platform);
+
+    this.platform2 = new Platform({x: 400, y: 0, xLen: 25, yLen: 200, context: this.context})
+    this.platforms.push(this.platform2);
+    this.entities.push(this.platform2);
+
+    this.platform3 = new Platform({x: 205, y: 0, xLen: 725, yLen: 25, context: this.context})
+    this.platforms.push(this.platform3);
+    this.entities.push(this.platform3);
+
+    this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
+    this.entities.push(this.box);
+    this.physicsObjs.push(this.box);
+    // this.platforms.push(this.box);
+
+
     this.player = new Player(playerConfig);
     this.camera = new Camera(playerConfig);
     this.camera.x = 0;
     this.camera.y = 0;
     this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
-    // this.player.keyBind();
-    this.keyBind()
-    
-    this.platform = new Platform({x: 130, y: 300, xLen: 300, yLen: 25, context: this.context})
-    this.platforms.push(this.platform);
-    this.entities.push(this.platform);
-    this.entities.push(this.player);
 
+    this.player.keyBind();
+
+    // this.player.platformCollision = this.platformCollision;
+
+    this.entities.push(this.player);
+    
     this.physicsObjs.push(this.player);
   }
 
@@ -51,82 +77,33 @@ class Game {
     //each game step
     viewPort.x = this.player.x - (1280 / 2);
     viewPort.y = this.player.y - (720 / 2);
-    // this.player.update(viewPort);
-
-    this.getInput(viewPort);
+    
+    this.applyGravity();
     
     this.camera.x = this.player.x - (1280 / 2);
     this.camera.y = this.player.y - (720 / 2);
-
 
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
     }
 
-    // this.platform.update(viewPort);
-    // this.camera.update(viewPort);
-
-
   }
-
-
-
-  getInput(viewPort){
-    if (this.playerInput.ArrowDown) {
-      if(!this.platformCollision(this.player.x, this.player.y + this.player.moveSpd, this.player)){
-        this.player.y += this.player.moveSpd;
-        viewPort.y += this.player.moveSpd;
-      }
-      else {
-        while(!this.platformCollision(this.player.x, this.player.y + 1, this.player)){
-          console.log('trigger')
-          this.player.y += 1;
-          viewPort.y += 1;
-        }
+  physicsCollision(x, y, obj){
+    //check collision with physics objs
+    for (let i = 0; i < this.physicsObjs.length; i++) {
+      // obj.positionMeeting(obj.x, obj.y, platforms[i]);
+      if (
+        (
+          (x + obj.xLen > this.physicsObjs[i].x && x < this.physicsObjs[i].x + this.physicsObjs[i].xLen) &&
+          (y + obj.yLen > this.physicsObjs[i].y && y < this.physicsObjs[i].y + this.physicsObjs[i].yLen) && 
+          obj != this.physicsObjs[i]
+        )
+      ) {
+        return true;
       }
     }
-    if (this.playerInput.ArrowUp) {
-      if (!this.platformCollision(this.player.x, this.player.y - this.player.moveSpd, this.player)) {
-        this.player.y -= this.player.moveSpd;
-        viewPort.y -= this.player.moveSpd;
-      } else {
-        while (!this.platformCollision(this.player.x, this.player.y - 1, this.player)) {
-          this.player.y -= 1;
-          viewPort.y -= 1;
-        }
-      }
-    }
-    if (this.playerInput.ArrowLeft) {
-      if (!this.platformCollision(this.player.x - this.player.moveSpd, this.player.y, this.player)) {
-        this.player.x -= this.player.moveSpd;
-        viewPort.x -= this.player.moveSpd;
-      } else {
-        while (!this.platformCollision(this.player.x - 1, this.player.y, this.player)) {
-          this.player.x -= 1;
-          viewPort.x -= 1;
-        }
-      }
-    }
-    if (this.playerInput.ArrowRight) {
-      if (!this.platformCollision(this.player.x + this.player.moveSpd, this.player.y, this.player)) {
-        this.player.x += this.player.moveSpd;
-        viewPort.x += this.player.moveSpd;
-      }
-      else {
-        while (!this.platformCollision(this.player.x + 1, this.player.y, this.player)) {
-          this.player.x += 1;
-          viewPort.x += 1;
-        }
-      }
-    }
-
-    if(this.playerInput[' '] && this.playerInput.canJump){
-      this.player.y -= 10;
-    }
-
+    return false;
   }
-
-
 
   platformCollision(x, y, obj){
   //check if new position overlaps with any platforms in platforms entitity
@@ -135,7 +112,8 @@ class Game {
       if (
         (
           (x + obj.xLen > this.platforms[i].x && x < this.platforms[i].x + this.platforms[i].xLen) &&
-          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen))
+          (y + obj.yLen > this.platforms[i].y && y < this.platforms[i].y + this.platforms[i].yLen)
+          )
       ) {
         return true;
       }
@@ -143,39 +121,22 @@ class Game {
     return false;
   }
 
-  keyBind(){
-    this.playerInput = {
-      ArrowLeft: false,
-      ArrowRight: false,
-      ArrowUp: false,
-      ArrowDown: false,
-      ' ': false,
-      canJump: true,
-    };
-
-    //key press
-    document.addEventListener('keydown', (event) => {
-      // const keyName = event.key;
-      if (PLAYER_KEYS.includes(event.key)) {
-        this.playerInput[event.key] = true;
-        // if(event.key === ' '){
-        //   this.playerInput.canJump = false;
-        // }
-      }
-    });
-    // key release
-    document.addEventListener('keyup', (event) => {
-      if (PLAYER_KEYS.includes(event.key)) {
-        this.playerInput[event.key] = false;
-      }
-    });
-  }
 
   applyGravity(){
     //iterate over list of entities and apply gravity
     for(let i = 0; i < this.physicsObjs.length; i++){
-      if(this.physicsObjs[i].vspd < 6){
-        this.physicsObjs[i].vspd += 0.2;
+      let curObj = this.physicsObjs[i];
+      
+      //normal gravity
+      if(this.gravDir > 0){
+        if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
+          curObj.vspd += 0.2;
+        }
+      }
+      else {
+        if(curObj.vspd > -6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)) {
+          curObj.vspd -= 0.2;
+        }
       }
     }
   }

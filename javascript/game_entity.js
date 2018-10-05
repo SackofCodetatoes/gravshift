@@ -6,10 +6,15 @@ class GameEntity {
     this.yLen = options.yLen;
     this.vspd = 0;
     this.hspd = 0;
-    // this.canvas = options.canvas;
+    this.physicsObj = false || options.physicsObj;
+
     this.context = options.context;
+    this.platformCollision = options.platformCollision;
+    this.physicsCollision = options.physicsCollision;
+
 
     this.draw = this.draw.bind(this);
+    this.stepCollisionCheck = this.stepCollisionCheck.bind(this);
   }
 
   draw(viewPort){
@@ -19,7 +24,37 @@ class GameEntity {
   }
 
   update(viewPort){
+    if(this.physicsObj){
+      this.stepCollisionCheck();
+    }
     this.draw(viewPort);
+  }
+
+  stepCollisionCheck(){
+    if (!this.platformCollision(this.x + this.hspd, this.y, this) && !this.physicsCollision(this.x + this.hspd, this.y, this)) {
+      this.x += this.hspd;
+    } else {
+      let sign = 1;
+      this.hspd < 0 ? sign = -1 : sign = sign;
+      while (!this.platformCollision(this.x + sign, this.y, this) && !this.physicsCollision(this.x + sign, this.y, this)) {
+        this.x += sign;
+      }
+    }
+
+    this.hspd = 0;
+
+    if (!this.platformCollision(this.x, this.y + this.vspd, this) && !this.physicsCollision(this.x, this.y + this.vspd, this)) {
+      this.y += this.vspd;
+    } else {
+      let sign = 1;
+      this.vspd < 0 ? sign = -1 : sign = sign;
+      while (!this.platformCollision(this.x, this.y + sign, this) && !this.physicsCollision(this.x, this.y + sign, this)) {
+        this.y += sign;
+      }
+
+
+      this.vspd = 0;
+    }
   }
 
   positionMeeting(x, y, obj){
