@@ -9,6 +9,8 @@ class Player extends GameEntity {
     this.jumpSpd = 6;
     this.game = options.game;
     this.platformCollision = options.platformCollision;
+    
+    this.state = 'moving';
 
 
     this.takeInput = this.takeInput.bind(this);

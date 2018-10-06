@@ -1,5 +1,6 @@
 class GameEntity {
   constructor(options){
+    this.active = true;
     this.x = options.x;
     this.y = options.y;
     this.xLen = options.xLen;
@@ -24,10 +25,12 @@ class GameEntity {
   }
 
   update(viewPort){
-    if(this.physicsObj){
-      this.stepCollisionCheck();
+    if(this.active){
+      if(this.physicsObj){
+        this.stepCollisionCheck();
+      }
+      this.draw(viewPort);
     }
-    this.draw(viewPort);
   }
 
   stepCollisionCheck(){

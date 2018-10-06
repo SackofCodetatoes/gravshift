@@ -39,7 +39,7 @@ class Game {
 
 
     //put all these in a seed file and use call/apply 
-    this.platform = new Platform({x: 130, y: 300, xLen: 600, yLen: 25, context: this.context})
+    this.platform = new Platform({x: 130, y: 300, xLen: 2000, yLen: 25, context: this.context})
     this.platforms.push(this.platform);
     this.entities.push(this.platform);
 
@@ -47,7 +47,7 @@ class Game {
     this.platforms.push(this.platform2);
     this.entities.push(this.platform2);
 
-    this.platform3 = new Platform({x: 205, y: 0, xLen: 725, yLen: 25, context: this.context})
+    this.platform3 = new Platform({x: 205, y: 0, xLen: 2025, yLen: 25, context: this.context})
     this.platforms.push(this.platform3);
     this.entities.push(this.platform3);
 
@@ -75,19 +75,27 @@ class Game {
 
   update(viewPort){
     //each game step
-    viewPort.x = this.player.x - (1280 / 2);
-    viewPort.y = this.player.y - (720 / 2);
-    
     this.applyGravity();
-    
-    this.camera.x = this.player.x - (1280 / 2);
-    this.camera.y = this.player.y - (720 / 2);
+    if(this.player.x > 1280 && viewPort.x < 1280){
+      viewPort.x += 40;
+    }
+    if (this.player.x < 1280 && viewPort.x > 0){
+      viewPort.x -= 40;
+    }
 
+    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+    // }
+
+    // this.context.strokeStyle = 'red';
+    // this.context.rect(viewPort.x - viewPort.x, viewPort.y, 1280, 720);
+    // this.context.stroke();
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
     }
 
   }
+
+
   physicsCollision(x, y, obj){
     //check collision with physics objs
     for (let i = 0; i < this.physicsObjs.length; i++) {
