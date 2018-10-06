@@ -218,6 +218,9 @@ class Game {
 
    this.gravDir = 1;
 
+   this.viewTransition = {dir: 'none', target: 0};
+  //  this.viewTransition = 'none';
+
    this.platformCollision = this.platformCollision.bind(this);
    this.physicsCollision = this.physicsCollision.bind(this);
   }
@@ -239,7 +242,7 @@ class Game {
 
 
     //put all these in a seed file and use call/apply 
-    this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 2000, yLen: 25, context: this.context})
+    this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 4400, yLen: 25, context: this.context})
     this.platforms.push(this.platform);
     this.entities.push(this.platform);
 
@@ -247,7 +250,7 @@ class Game {
     this.platforms.push(this.platform2);
     this.entities.push(this.platform2);
 
-    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 2025, yLen: 25, context: this.context})
+    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 4425, yLen: 25, context: this.context})
     this.platforms.push(this.platform3);
     this.entities.push(this.platform3);
 
@@ -265,8 +268,6 @@ class Game {
 
     this.player.keyBind();
 
-    // this.player.platformCollision = this.platformCollision;
-
     this.entities.push(this.player);
     
     this.physicsObjs.push(this.player);
@@ -276,21 +277,51 @@ class Game {
   update(viewPort){
     //each game step
     this.applyGravity();
-    if(this.player.x > 1280 && viewPort.x < 1280){
-      viewPort.x += 40;
-    }
-    if (this.player.x < 1280 && viewPort.x > 0){
-      viewPort.x -= 40;
+
+    
+
+    if(this.player.x - viewPort.x > 1280 && this.viewTransition.dir === 'none'){
+      // viewPort.x += 40;
+      this.viewTransition.dir = 'right';
+      this.viewTransition.target = viewPort.x + 1280
+      // this.viewTransition.target = viewPort.x + 1280
     }
 
-    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
-    // }
+    if(this.viewTransition.dir != 'none' && viewPort.x < this.viewTransition.target){
+      this.viewTransitionStep(this.viewTransition, viewPort);
+      if(viewPort.x >= this.viewTransition.target){
+        this.viewTransition.dir = 'none';
+        this.viewTransition.target = 0;
+      }
+    }
 
-    // this.context.strokeStyle = 'red';
-    // this.context.rect(viewPort.x - viewPort.x, viewPort.y, 1280, 720);
-    // this.context.stroke();
+    if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+      //restart
+    }
+
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
+    }
+
+  }
+  
+  viewTransitionStep(viewTransition, viewPort){
+    switch(viewTransition.dir){
+      case 'right':
+        viewPort.x += 40;
+      break;
+
+      case 'left': 
+
+      break;
+
+      case 'up':
+
+      break;
+
+      case 'down':
+
+      break;
     }
 
   }
