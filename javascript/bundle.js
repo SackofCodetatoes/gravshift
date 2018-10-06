@@ -281,15 +281,26 @@ class Game {
     
 
     if(this.player.x - viewPort.x > 1280 && this.viewTransition.dir === 'none'){
-      // viewPort.x += 40;
       this.viewTransition.dir = 'right';
       this.viewTransition.target = viewPort.x + 1280
-      // this.viewTransition.target = viewPort.x + 1280
+    }
+    else if(this.player.x - viewPort.x < 0 && this.viewTransition.dir === 'none'){
+      this.viewTransition.dir = 'left';
+      this.viewTransition.target = viewPort.x - 1280
     }
 
+    //transition right
     if(this.viewTransition.dir != 'none' && viewPort.x < this.viewTransition.target){
       this.viewTransitionStep(this.viewTransition, viewPort);
       if(viewPort.x >= this.viewTransition.target){
+        this.viewTransition.dir = 'none';
+        this.viewTransition.target = 0;
+      }
+    }
+    //transition left
+    else if(this.viewTransition.dir != 'none' && viewPort.x > this.viewTransition.target){
+      this.viewTransitionStep(this.viewTransition, viewPort);
+      if(viewPort.x <= this.viewTransition.target){
         this.viewTransition.dir = 'none';
         this.viewTransition.target = 0;
       }
@@ -312,15 +323,15 @@ class Game {
       break;
 
       case 'left': 
-
+        viewPort.x -= 40;
       break;
 
       case 'up':
-
+        viewPort.y -= 40;
       break;
 
       case 'down':
-
+        viewPort.y += 40;
       break;
     }
 
