@@ -198,6 +198,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./camera.js */ "./javascript/camera.js");
 /* harmony import */ var _game_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game_entity.js */ "./javascript/game_entity.js");
 /* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./platform.js */ "./javascript/platform.js");
+/* harmony import */ var _room_seed_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./room_seed.js */ "./javascript/room_seed.js");
+
 
 
 
@@ -241,22 +243,11 @@ class Game {
     }
 
 
-    //put all these in a seed file and use call/apply 
-    this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 130, y: 300, xLen: 4400, yLen: 25, context: this.context})
-    this.platforms.push(this.platform);
-    this.entities.push(this.platform);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomOne"].call(this);
 
-    this.platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 400, y: 0, xLen: 25, yLen: 200, context: this.context})
-    this.platforms.push(this.platform2);
-    this.entities.push(this.platform2);
-
-    this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({x: 205, y: 0, xLen: 4425, yLen: 25, context: this.context})
-    this.platforms.push(this.platform3);
-    this.entities.push(this.platform3);
-
-    this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, playerConfig, {x: 255, y: 205}));
-    this.entities.push(this.box);
-    this.physicsObjs.push(this.box);
+    // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
+    // this.entities.push(this.box);
+    // this.physicsObjs.push(this.box);
     // this.platforms.push(this.box);
 
 
@@ -278,32 +269,64 @@ class Game {
     //each game step
     this.applyGravity();
 
+    //if not camera transitioning, set transition state
+    if(this.viewTransition.dir === 'none'){
+      if(this.player.x - viewPort.x > 1280){
+        this.viewTransition.dir = 'right';
+        this.viewTransition.target = viewPort.x + 1280
+      }
+      else if(this.player.x - viewPort.x < 0){
+        this.viewTransition.dir = 'left';
+        this.viewTransition.target = viewPort.x - 1280
+      }
+      else if(this.player.y - viewPort.y > 720) {
+        this.viewTransition.dir = 'down';
+        this.viewTransition.target = viewPort.y + 720
+      }
+      else if(this.player.y - viewPort.y < 0) {
+        this.viewTransition.dir = 'up';
+        this.viewTransition.target = viewPort.y - 720;
+      }
+
+    }
+
+    if(this.viewTransition.dir === 'left' || this.viewTransition.dir === 'right'){
+      //transition right
+      if(viewPort.x < this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.x >= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
+      }
+      //transition left
+      else if(viewPort.x > this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.x <= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
+      }
+    }
     
-
-    if(this.player.x - viewPort.x > 1280 && this.viewTransition.dir === 'none'){
-      this.viewTransition.dir = 'right';
-      this.viewTransition.target = viewPort.x + 1280
-    }
-    else if(this.player.x - viewPort.x < 0 && this.viewTransition.dir === 'none'){
-      this.viewTransition.dir = 'left';
-      this.viewTransition.target = viewPort.x - 1280
-    }
-
-    //transition right
-    if(this.viewTransition.dir != 'none' && viewPort.x < this.viewTransition.target){
-      this.viewTransitionStep(this.viewTransition, viewPort);
-      if(viewPort.x >= this.viewTransition.target){
-        this.viewTransition.dir = 'none';
-        this.viewTransition.target = 0;
+    else if(this.viewTransition.dir === 'up' || this.viewTransition.dir === 'down'){
+      //transition up
+      if(viewPort.y > this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.y <= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
       }
-    }
-    //transition left
-    else if(this.viewTransition.dir != 'none' && viewPort.x > this.viewTransition.target){
-      this.viewTransitionStep(this.viewTransition, viewPort);
-      if(viewPort.x <= this.viewTransition.target){
-        this.viewTransition.dir = 'none';
-        this.viewTransition.target = 0;
+      //transition down
+      else if(viewPort.y < this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.y >= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
       }
+
     }
 
     if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
@@ -606,6 +629,58 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
 
 /* harmony default export */ __webpack_exports__["default"] = (Player);
+
+/***/ }),
+
+/***/ "./javascript/room_seed.js":
+/*!*********************************!*\
+  !*** ./javascript/room_seed.js ***!
+  \*********************************/
+/*! exports provided: roomOne */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomOne", function() { return roomOne; });
+/* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player.js */ "./javascript/player.js");
+/* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./camera.js */ "./javascript/camera.js");
+/* harmony import */ var _game_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game_entity.js */ "./javascript/game_entity.js");
+/* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./platform.js */ "./javascript/platform.js");
+
+
+
+
+
+const roomOne = function() {
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 130, y: 300, xLen: 4400, yLen: 25, context: this.context })
+  
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
+
+  this.platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 400, y: 0, xLen: 25, yLen: 200, context: this.context })
+  this.platforms.push(this.platform2);
+  this.entities.push(this.platform2);
+
+  this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 500, y: 0, xLen: 4425, yLen: 25, context: this.context })
+  this.platforms.push(this.platform3);
+  this.entities.push(this.platform3);
+
+
+  this.platform4 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: -400, xLen: 4425, yLen: 25, context: this.context })
+  this.platforms.push(this.platform4);
+  this.entities.push(this.platform4);
+
+  // this.box = new GameEntity(Object.assign({}, playerConfig, {
+  //   x: 255,
+  //   y: 205
+  // }));
+  // this.entities.push(this.box);
+  // this.physicsObjs.push(this.box);
+
+
+}
+
+
 
 /***/ })
 

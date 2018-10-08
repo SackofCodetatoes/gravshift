@@ -2,6 +2,7 @@ import Player from "./player.js";
 import Camera from "./camera.js";
 import GameEntity from "./game_entity.js";
 import Platform from "./platform.js"
+import * as RoomSeed from './room_seed.js'
 
 const PLAYER_KEYS = ['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' '];
 
@@ -41,22 +42,11 @@ class Game {
     }
 
 
-    //put all these in a seed file and use call/apply 
-    this.platform = new Platform({x: 130, y: 300, xLen: 4400, yLen: 25, context: this.context})
-    this.platforms.push(this.platform);
-    this.entities.push(this.platform);
+    RoomSeed.roomOne.call(this);
 
-    this.platform2 = new Platform({x: 400, y: 0, xLen: 25, yLen: 200, context: this.context})
-    this.platforms.push(this.platform2);
-    this.entities.push(this.platform2);
-
-    this.platform3 = new Platform({x: 205, y: 0, xLen: 4425, yLen: 25, context: this.context})
-    this.platforms.push(this.platform3);
-    this.entities.push(this.platform3);
-
-    this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
-    this.entities.push(this.box);
-    this.physicsObjs.push(this.box);
+    // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
+    // this.entities.push(this.box);
+    // this.physicsObjs.push(this.box);
     // this.platforms.push(this.box);
 
 
@@ -78,32 +68,64 @@ class Game {
     //each game step
     this.applyGravity();
 
+    //if not camera transitioning, set transition state
+    if(this.viewTransition.dir === 'none'){
+      if(this.player.x - viewPort.x > 1280){
+        this.viewTransition.dir = 'right';
+        this.viewTransition.target = viewPort.x + 1280
+      }
+      else if(this.player.x - viewPort.x < 0){
+        this.viewTransition.dir = 'left';
+        this.viewTransition.target = viewPort.x - 1280
+      }
+      else if(this.player.y - viewPort.y > 720) {
+        this.viewTransition.dir = 'down';
+        this.viewTransition.target = viewPort.y + 720
+      }
+      else if(this.player.y - viewPort.y < 0) {
+        this.viewTransition.dir = 'up';
+        this.viewTransition.target = viewPort.y - 720;
+      }
+
+    }
+
+    if(this.viewTransition.dir === 'left' || this.viewTransition.dir === 'right'){
+      //transition right
+      if(viewPort.x < this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.x >= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
+      }
+      //transition left
+      else if(viewPort.x > this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.x <= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
+      }
+    }
     
-
-    if(this.player.x - viewPort.x > 1280 && this.viewTransition.dir === 'none'){
-      this.viewTransition.dir = 'right';
-      this.viewTransition.target = viewPort.x + 1280
-    }
-    else if(this.player.x - viewPort.x < 0 && this.viewTransition.dir === 'none'){
-      this.viewTransition.dir = 'left';
-      this.viewTransition.target = viewPort.x - 1280
-    }
-
-    //transition right
-    if(this.viewTransition.dir != 'none' && viewPort.x < this.viewTransition.target){
-      this.viewTransitionStep(this.viewTransition, viewPort);
-      if(viewPort.x >= this.viewTransition.target){
-        this.viewTransition.dir = 'none';
-        this.viewTransition.target = 0;
+    else if(this.viewTransition.dir === 'up' || this.viewTransition.dir === 'down'){
+      //transition up
+      if(viewPort.y > this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.y <= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
       }
-    }
-    //transition left
-    else if(this.viewTransition.dir != 'none' && viewPort.x > this.viewTransition.target){
-      this.viewTransitionStep(this.viewTransition, viewPort);
-      if(viewPort.x <= this.viewTransition.target){
-        this.viewTransition.dir = 'none';
-        this.viewTransition.target = 0;
+      //transition down
+      else if(viewPort.y < this.viewTransition.target){
+        this.viewTransitionStep(this.viewTransition, viewPort);
+        if(viewPort.y >= this.viewTransition.target){
+          this.viewTransition.dir = 'none';
+          this.viewTransition.target = 0;
+        }
       }
+
     }
 
     if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
