@@ -32,8 +32,8 @@ class Game {
   initialize(){
     //game init
     let playerConfig = {
-      x: 50,
-      y: 500,
+      x: 50 + this.canvasWidth * 1 + 200,
+      y: 500 - this.canvasHeight * 2,
       xLen: 25,
       yLen: 25,
       context: this.context,
@@ -47,6 +47,12 @@ class Game {
     RoomSeed.roomOne.call(this);
     RoomSeed.roomTwo.call(this);
     RoomSeed.roomThree.call(this);
+    RoomSeed.roomFour.call(this);
+    RoomSeed.roomFive.call(this);
+    RoomSeed.roomSix.call(this);
+    RoomSeed.roomSeven.call(this);
+    RoomSeed.roomEight.call(this);
+    RoomSeed.roomNine.call(this);
 
     this.player = new Player(playerConfig);
     this.camera = new Camera(playerConfig);

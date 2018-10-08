@@ -233,8 +233,8 @@ class Game {
   initialize(){
     //game init
     let playerConfig = {
-      x: 50,
-      y: 500,
+      x: 50 + this.canvasWidth * 1 + 200,
+      y: 500 - this.canvasHeight * 2,
       xLen: 25,
       yLen: 25,
       context: this.context,
@@ -248,6 +248,12 @@ class Game {
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomOne"].call(this);
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomTwo"].call(this);
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomThree"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomFour"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomFive"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomSix"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomSeven"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomEight"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomNine"].call(this);
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
     this.camera = new _camera_js__WEBPACK_IMPORTED_MODULE_1__["default"](playerConfig);
@@ -631,7 +637,7 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 /*!*********************************!*\
   !*** ./javascript/room_seed.js ***!
   \*********************************/
-/*! exports provided: roomOne, roomTwo, roomThree */
+/*! exports provided: roomOne, roomTwo, roomThree, roomFour, roomFive, roomSix, roomSeven, roomEight, roomNine */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -639,6 +645,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomOne", function() { return roomOne; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomTwo", function() { return roomTwo; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomThree", function() { return roomThree; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomFour", function() { return roomFour; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomFive", function() { return roomFive; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomSix", function() { return roomSix; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomSeven", function() { return roomSeven; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomEight", function() { return roomEight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomNine", function() { return roomNine; });
 /* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player.js */ "./javascript/player.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./camera.js */ "./javascript/camera.js");
 /* harmony import */ var _game_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game_entity.js */ "./javascript/game_entity.js");
@@ -675,6 +687,15 @@ const right = function (){
   let platform4 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth - 25, y: 0, xLen: 25, yLen: this.canvasHeight, context: this.context })
   this.platforms.push(platform4);
   this.entities.push(platform4);
+}
+
+const platformAdder = function(platform){
+  this.platforms.push(platform);
+  this.entities.push(platform);
+}
+const boxAdder = function(box){
+  this.physicsObjs.push(box);
+  this.entities.push(box);
 }
 
 const wall = function(side, offsetX, offsetY){
@@ -767,10 +788,173 @@ const roomTwo = function() {
 }
 
 const roomThree = function() {
-  wall.call(this, 'top', this.canvasWidth * 2, 0);
+  const boxConfig = { x: 50, y: 500, xLen: 100, yLen: 150, context: this.context, game: this, platformCollision: this.platformCollision, physicsObj: true, physicsCollision: this.physicsCollision,}
+
+  // wall.call(this, 'top', this.canvasWidth * 2, 0);
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2, y: 0 - 25, xLen: this.canvasWidth - 100, yLen: 50, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+
   wall.call(this, 'bottom', this.canvasWidth * 2, this.canvasHeight);
   wall.call(this, 'right', this.canvasWidth * 3, 0);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 + 300, y: 0, xLen: 25, yLen: this.canvasHeight / 2, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+
   
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2  + 150, y: this.canvasHeight / 2, xLen: 360, yLen: 25, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+  
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2  + 300, y: this.canvasHeight / 2 + 175, xLen: 25, yLen: 125, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+
+  this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 325, y: 400}));
+  this.entities.push(this.box);
+  this.physicsObjs.push(this.box);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 3 - 200, y: this.canvasHeight / 2 - 200, xLen: 200, yLen: 25, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+}
+
+const roomFour = function(){
+  const boxConfig = { x: 50, y: 500, xLen: 25, yLen: 75, context: this.context, game: this, platformCollision: this.platformCollision, physicsObj: true, physicsCollision: this.physicsCollision, }
+
+  // wall.call(this, 'left', this.canvasWidth * 2, 0 - this.canvasHeight)
+  wall.call(this, 'right', this.canvasWidth * 3, 0 - this.canvasHeight)
+  wall.call(this, 'top', this.canvasWidth * 2, 0 - this.canvasHeight)
+  
+
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 + 420, y: 0 - 200, xLen: 200, yLen: 25, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 + 420, y: 0 - 550, xLen: 200, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 + 420, y: 0 - 175, xLen: 25, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+  let box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 420, y: 0 - 150}))
+  boxAdder.call(this, box);
+
+  box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 25, y: 0 - this.canvasHeight + 25, xLen: 100, yLen: 75 * 4}))
+  boxAdder.call(this, box)
+  
+  box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 125, y: 0 - this.canvasHeight + 25, xLen: 100, yLen: 75 * 3}))
+  boxAdder.call(this, box)
+
+  box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 225, y: 0 - this.canvasHeight + 25, xLen: 100, yLen: 75 * 2}))
+  boxAdder.call(this, box)
+  
+  // box = new GameEntity(Object.assign({}, boxConfig, {x: this.canvasWidth * 2 + 25, y: 0 - this.canvasHeight + 25, xLen: 75, yLen: 75 * 4}))
+  // boxAdder.call(this, box)
+  
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 25, y: 0 - this.canvasHeight * 1, xLen: 50, yLen: 325, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 25, y: 0 - this.canvasHeight * 1 + 425, xLen: 50, yLen: 215, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2, y: 0 - 75, xLen: 350, yLen: 75, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
+}
+
+const roomFive = function(){
+  wall.call(this, 'top', this.canvasWidth * 1, 0 - this.canvasHeight);
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 1 - 25, y: 0 - this.canvasHeight * 1, xLen: 50, yLen: 75, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 1 - 25, y: 0 - this.canvasHeight * 1 + 175, xLen: 50, yLen: 465, context: this.context })
+  platformAdder.call(this, platform);
+  
+
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 1 + 540, y: 0 - this.canvasHeight * 1 + 300, xLen: 100, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 1 + 250, y: 0 - this.canvasHeight * 1 + 300, xLen: 150, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  // platform = new Platform({ x: this.canvasWidth * 1 + 250, y: 0 - this.canvasHeight * 1 + 300, xLen: 150, yLen: 25, context: this.context })
+  // platformAdder.call(this, platform);
+}
+
+const roomSix = function(){
+  const boxConfig = { x: 50, y: 500, xLen: 75, yLen: 100, context: this.context, game: this, platformCollision: this.platformCollision, physicsObj: true, physicsCollision: this.physicsCollision, }
+
+  wall.call(this, 'left', this.canvasWidth * 0, 0 - this.canvasHeight);
+
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 0, y: 0 - this.canvasHeight * 1 - 25, xLen: 100, yLen: 50, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 0 + 240, y: 0 - this.canvasHeight * 1 - 25, xLen: 400, yLen: 50, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth / 2, y: 0 - this.canvasHeight * 1, xLen: 25, yLen: 400, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth / 2 + 140, y: 0 - this.canvasHeight * 1 + 200, xLen: 200, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth / 2, y: 0 - this.canvasHeight * 1 + 375, xLen: 200, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 100, y: 0 - this.canvasHeight * 1 + 375, xLen: 100, yLen: 25, context: this.context } )
+  platformAdder.call(this, platform);
+
+}
+
+const roomSeven = function(){
+  const boxConfig = { x: 50, y: 500, xLen: 50, yLen: 100, context: this.context, game: this, platformCollision: this.platformCollision, physicsObj: true, physicsCollision: this.physicsCollision, }
+
+  wall.call(this, 'top', 0, 0 - this.canvasHeight * 2)
+  wall.call(this, 'left', 0, 0 - this.canvasHeight * 2)
+
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 100, y: 0 - this.canvasHeight * 2 + 500, xLen: 140, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 300, y: 0 - this.canvasHeight * 2 + 250, xLen: 140, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 400, y: 0 - this.canvasHeight * 2 + 450, xLen: 140, yLen: 25, context: this.context })
+  platformAdder.call(this, platform);
+
+  let box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: 380, y: 0 - this.canvasHeight * 2 + 300}))
+  boxAdder.call(this, box);
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth - 25, y: 0 - this.canvasHeight * 2, xLen: 50, yLen: 100, context: this.context })
+  platformAdder.call(this, platform);
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth - 25, y: 0 - this.canvasHeight * 2 + 200, xLen: 50, yLen: 440, context: this.context })
+  platformAdder.call(this, platform);
+
+}
+const roomEight = function(){
+  wall.call(this, 'top', this.canvasWidth, 0 - this.canvasHeight * 2)
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 25, y: 0 - this.canvasHeight * 2 + 200, xLen: 50, yLen: 440, context: this.context })
+  platformAdder.call(this, platform);
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 25, y: 0 - this.canvasHeight * 2 , xLen: 50, yLen: 100, context: this.context })
+  platformAdder.call(this, platform)
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 250, y: 0 - this.canvasHeight * 2 , xLen: 25, yLen: 450, context: this.context })
+  platformAdder.call(this, platform)
+
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 550, y: 0 - this.canvasHeight * 2 + 200, xLen: 75, yLen: 25, context: this.context })
+  platformAdder.call(this, platform)
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 350, y: 0 - this.canvasHeight * 2 + 300, xLen: 75, yLen: 25, context: this.context })
+  platformAdder.call(this, platform)
+  platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 2 - 500, y: 0 - this.canvasHeight * 2 + 400, xLen: 75, yLen: 25, context: this.context })
+  platformAdder.call(this, platform)
+  const boxConfig = { x: 50, y: 500, xLen: 25, yLen: 75, context: this.context, game: this, platformCollision: this.platformCollision, physicsObj: true, physicsCollision: this.physicsCollision, }
+
+  let box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth * 2 - 125, y: 0 - this.canvasHeight * 2 + 100 }))
+  boxAdder.call(this, box);
+}
+const roomNine = function(){
+  wall.call(this, 'top', this.canvasWidth * 2, 0 - this.canvasHeight * 2)
+  wall.call(this, 'right', this.canvasHeight * 3, 0 - this.canvasHeight * 2)
+
 }
 
 
