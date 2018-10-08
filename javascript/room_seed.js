@@ -3,6 +3,7 @@ import Camera from "./camera.js";
 import GameEntity from "./game_entity.js";
 import Platform from "./platform.js";
 
+
 const top = function() {
     //top
   let platform = new Platform({ x: 0, y: 0, xLen: this.canvasWidth, yLen: 25, context: this.context })
@@ -89,6 +90,17 @@ export const roomOne = function() {
 }
 
 export const roomTwo = function() {
+  const boxConfig = {
+    x: 50,
+    y: 500,
+    xLen: 25,
+    yLen: 25,
+    context: this.context,
+    game: this,
+    platformCollision: this.platformCollision,
+    physicsObj: true,
+    physicsCollision: this.physicsCollision,
+  }
   wall.call(this, 'top', this.canvasWidth * 1, 0);
   wall.call(this, 'bottom', this.canvasWidth * 1, this.canvasHeight);
   wall.call(this, 'right', this.canvasWidth * 2, 100);
@@ -98,5 +110,21 @@ export const roomTwo = function() {
   this.platforms.push(this.platform);
   this.entities.push(this.platform);
 
+  this.box = new GameEntity(Object.assign({}, boxConfig, {x: this.canvasWidth + 100, y: 30}));
+  this.entities.push(this.box);
+  this.physicsObjs.push(this.box);
+  
+  this.box = new GameEntity(Object.assign({}, boxConfig, {x: this.canvasWidth + 400, y: 30}));
+  this.entities.push(this.box);
+  this.physicsObjs.push(this.box);
+
+
+}
+
+export const roomThree = function() {
+  wall.call(this, 'top', this.canvasWidth * 2, 0);
+  wall.call(this, 'bottom', this.canvasWidth * 2, this.canvasHeight);
+  wall.call(this, 'right', this.canvasWidth * 3, 0);
+  
 }
 

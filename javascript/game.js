@@ -46,18 +46,10 @@ class Game {
 
     RoomSeed.roomOne.call(this);
     RoomSeed.roomTwo.call(this);
-
-    // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
-    // this.entities.push(this.box);
-    // this.physicsObjs.push(this.box);
-    // this.platforms.push(this.box);
-
+    RoomSeed.roomThree.call(this);
 
     this.player = new Player(playerConfig);
     this.camera = new Camera(playerConfig);
-    // this.camera.x = 0;
-    // this.camera.y = 0;
-    // this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
 
     this.player.keyBind();
 

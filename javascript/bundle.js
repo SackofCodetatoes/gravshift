@@ -247,18 +247,10 @@ class Game {
 
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomOne"].call(this);
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomTwo"].call(this);
-
-    // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
-    // this.entities.push(this.box);
-    // this.physicsObjs.push(this.box);
-    // this.platforms.push(this.box);
-
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomThree"].call(this);
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
     this.camera = new _camera_js__WEBPACK_IMPORTED_MODULE_1__["default"](playerConfig);
-    // this.camera.x = 0;
-    // this.camera.y = 0;
-    // this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
 
     this.player.keyBind();
 
@@ -639,17 +631,19 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 /*!*********************************!*\
   !*** ./javascript/room_seed.js ***!
   \*********************************/
-/*! exports provided: roomOne, roomTwo */
+/*! exports provided: roomOne, roomTwo, roomThree */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomOne", function() { return roomOne; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomTwo", function() { return roomTwo; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomThree", function() { return roomThree; });
 /* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player.js */ "./javascript/player.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./camera.js */ "./javascript/camera.js");
 /* harmony import */ var _game_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game_entity.js */ "./javascript/game_entity.js");
 /* harmony import */ var _platform_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./platform.js */ "./javascript/platform.js");
+
 
 
 
@@ -741,6 +735,17 @@ const roomOne = function() {
 }
 
 const roomTwo = function() {
+  const boxConfig = {
+    x: 50,
+    y: 500,
+    xLen: 25,
+    yLen: 25,
+    context: this.context,
+    game: this,
+    platformCollision: this.platformCollision,
+    physicsObj: true,
+    physicsCollision: this.physicsCollision,
+  }
   wall.call(this, 'top', this.canvasWidth * 1, 0);
   wall.call(this, 'bottom', this.canvasWidth * 1, this.canvasHeight);
   wall.call(this, 'right', this.canvasWidth * 2, 100);
@@ -750,6 +755,22 @@ const roomTwo = function() {
   this.platforms.push(this.platform);
   this.entities.push(this.platform);
 
+  this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth + 100, y: 30}));
+  this.entities.push(this.box);
+  this.physicsObjs.push(this.box);
+  
+  this.box = new _game_entity_js__WEBPACK_IMPORTED_MODULE_2__["default"](Object.assign({}, boxConfig, {x: this.canvasWidth + 400, y: 30}));
+  this.entities.push(this.box);
+  this.physicsObjs.push(this.box);
+
+
+}
+
+const roomThree = function() {
+  wall.call(this, 'top', this.canvasWidth * 2, 0);
+  wall.call(this, 'bottom', this.canvasWidth * 2, this.canvasHeight);
+  wall.call(this, 'right', this.canvasWidth * 3, 0);
+  
 }
 
 
