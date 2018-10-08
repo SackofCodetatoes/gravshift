@@ -11,6 +11,8 @@ class Game {
   constructor(options){
    //preload 
    this.canvas = options.canvas;
+   this.canvasHeight = options.canvas.height;
+   this.canvasWidth = options.canvas.width;
    this.context = options.context;
    this.platforms = [];
    this.entities = [];
@@ -30,8 +32,8 @@ class Game {
   initialize(){
     //game init
     let playerConfig = {
-      x: 205,
-      y: 205,
+      x: 50,
+      y: 500,
       xLen: 25,
       yLen: 25,
       context: this.context,
@@ -43,6 +45,7 @@ class Game {
 
 
     RoomSeed.roomOne.call(this);
+    RoomSeed.roomTwo.call(this);
 
     // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
     // this.entities.push(this.box);
@@ -52,9 +55,9 @@ class Game {
 
     this.player = new Player(playerConfig);
     this.camera = new Camera(playerConfig);
-    this.camera.x = 0;
-    this.camera.y = 0;
-    this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
+    // this.camera.x = 0;
+    // this.camera.y = 0;
+    // this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
 
     this.player.keyBind();
 
@@ -70,21 +73,21 @@ class Game {
 
     //if not camera transitioning, set transition state
     if(this.viewTransition.dir === 'none'){
-      if(this.player.x - viewPort.x > 1280){
+      if(this.player.x - viewPort.x > this.canvasWidth){
         this.viewTransition.dir = 'right';
-        this.viewTransition.target = viewPort.x + 1280
+        this.viewTransition.target = viewPort.x + this.canvasWidth
       }
       else if(this.player.x - viewPort.x < 0){
         this.viewTransition.dir = 'left';
-        this.viewTransition.target = viewPort.x - 1280
+        this.viewTransition.target = viewPort.x - this.canvasWidth
       }
-      else if(this.player.y - viewPort.y > 720) {
+      else if(this.player.y - viewPort.y > this.canvasHeight) {
         this.viewTransition.dir = 'down';
-        this.viewTransition.target = viewPort.y + 720
+        this.viewTransition.target = viewPort.y + this.canvasHeight;
       }
       else if(this.player.y - viewPort.y < 0) {
         this.viewTransition.dir = 'up';
-        this.viewTransition.target = viewPort.y - 720;
+        this.viewTransition.target = viewPort.y - this.canvasHeight;
       }
 
     }
@@ -128,9 +131,9 @@ class Game {
 
     }
 
-    if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
-      //restart
-    }
+    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+    //   //restart
+    // }
 
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
@@ -201,7 +204,7 @@ class Game {
       
       //normal gravity
       if(this.gravDir > 0){
-        if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
+        if(curObj.vspd < 8 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
           curObj.vspd += 0.2;
         }
       }

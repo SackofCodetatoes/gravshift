@@ -24,7 +24,7 @@ class Display {
     //create request animation loop
     this.context.clearRect(0, 0, 1280, 720);
 
-    this.context.drawImage(this.grid, 0, 300, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
+    this.context.drawImage(this.grid, 16, 282, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
 
     this.game.update(this.viewPort);
 

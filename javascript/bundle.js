@@ -151,7 +151,7 @@ class Display {
     //create request animation loop
     this.context.clearRect(0, 0, 1280, 720);
 
-    this.context.drawImage(this.grid, 0, 300, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
+    this.context.drawImage(this.grid, 16, 282, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
 
     this.game.update(this.viewPort);
 
@@ -212,6 +212,8 @@ class Game {
   constructor(options){
    //preload 
    this.canvas = options.canvas;
+   this.canvasHeight = options.canvas.height;
+   this.canvasWidth = options.canvas.width;
    this.context = options.context;
    this.platforms = [];
    this.entities = [];
@@ -231,8 +233,8 @@ class Game {
   initialize(){
     //game init
     let playerConfig = {
-      x: 205,
-      y: 205,
+      x: 50,
+      y: 500,
       xLen: 25,
       yLen: 25,
       context: this.context,
@@ -244,6 +246,7 @@ class Game {
 
 
     _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomOne"].call(this);
+    _room_seed_js__WEBPACK_IMPORTED_MODULE_4__["roomTwo"].call(this);
 
     // this.box = new GameEntity(Object.assign({}, playerConfig, {x: 255, y: 205}));
     // this.entities.push(this.box);
@@ -253,9 +256,9 @@ class Game {
 
     this.player = new _player_js__WEBPACK_IMPORTED_MODULE_0__["default"](playerConfig);
     this.camera = new _camera_js__WEBPACK_IMPORTED_MODULE_1__["default"](playerConfig);
-    this.camera.x = 0;
-    this.camera.y = 0;
-    this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
+    // this.camera.x = 0;
+    // this.camera.y = 0;
+    // this.camera.center = {x: this.x + (1280 / 2), y: this.y + (720 / 2)}
 
     this.player.keyBind();
 
@@ -271,21 +274,21 @@ class Game {
 
     //if not camera transitioning, set transition state
     if(this.viewTransition.dir === 'none'){
-      if(this.player.x - viewPort.x > 1280){
+      if(this.player.x - viewPort.x > this.canvasWidth){
         this.viewTransition.dir = 'right';
-        this.viewTransition.target = viewPort.x + 1280
+        this.viewTransition.target = viewPort.x + this.canvasWidth
       }
       else if(this.player.x - viewPort.x < 0){
         this.viewTransition.dir = 'left';
-        this.viewTransition.target = viewPort.x - 1280
+        this.viewTransition.target = viewPort.x - this.canvasWidth
       }
-      else if(this.player.y - viewPort.y > 720) {
+      else if(this.player.y - viewPort.y > this.canvasHeight) {
         this.viewTransition.dir = 'down';
-        this.viewTransition.target = viewPort.y + 720
+        this.viewTransition.target = viewPort.y + this.canvasHeight;
       }
       else if(this.player.y - viewPort.y < 0) {
         this.viewTransition.dir = 'up';
-        this.viewTransition.target = viewPort.y - 720;
+        this.viewTransition.target = viewPort.y - this.canvasHeight;
       }
 
     }
@@ -329,9 +332,9 @@ class Game {
 
     }
 
-    if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
-      //restart
-    }
+    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+    //   //restart
+    // }
 
     for(let i = 0; i < this.entities.length; i++){
       this.entities[i].update(viewPort);
@@ -402,7 +405,7 @@ class Game {
       
       //normal gravity
       if(this.gravDir > 0){
-        if(curObj.vspd < 6 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
+        if(curObj.vspd < 8 && !this.platformCollision(curObj.x, curObj.y + curObj.vspd, curObj)){
           curObj.vspd += 0.2;
         }
       }
@@ -636,12 +639,13 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
 /*!*********************************!*\
   !*** ./javascript/room_seed.js ***!
   \*********************************/
-/*! exports provided: roomOne */
+/*! exports provided: roomOne, roomTwo */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomOne", function() { return roomOne; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "roomTwo", function() { return roomTwo; });
 /* harmony import */ var _player_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./player.js */ "./javascript/player.js");
 /* harmony import */ var _camera_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./camera.js */ "./javascript/camera.js");
 /* harmony import */ var _game_entity_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./game_entity.js */ "./javascript/game_entity.js");
@@ -651,32 +655,100 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const roomOne = function() {
-  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 130, y: 300, xLen: 4400, yLen: 25, context: this.context })
+const top = function() {
+    //top
+  let platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: 0, xLen: this.canvasWidth, yLen: 25, context: this.context })
+  this.platforms.push(platform);
+  this.entities.push(platform);
   
+}
+const bottom = function() {
+  //bottom
+  let platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: this.canvasHeight - 25, xLen: this.canvasWidth, yLen: 25, context: this.context })
+  this.platforms.push(platform3);
+  this.entities.push(platform3);
+}
+
+const left = function() {
+  //left
+  let platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: 25, xLen: 25, yLen: this.canvasHeight, context: this.context })
+  this.platforms.push(platform2);
+  this.entities.push(platform2);
+}
+
+const right = function (){
+  //right
+  let platform4 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth - 25, y: 0, xLen: 25, yLen: this.canvasHeight, context: this.context })
+  this.platforms.push(platform4);
+  this.entities.push(platform4);
+}
+
+const wall = function(side, offsetX, offsetY){
+  let platform;
+  switch(side){
+    case 'top':
+      platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: offsetX, y: offsetY - 25, xLen: this.canvasWidth, yLen: 50, context: this.context }) 
+    break;
+
+    case 'bottom':
+      platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: offsetX, y: offsetY - 25, xLen: this.canvasWidth, yLen: 50, context: this.context })
+    break;
+
+    case 'left':
+      platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: offsetX - 25, y: offsetY, xLen: 50, yLen: this.canvasHeight, context: this.context })
+    break;
+
+    case 'right':
+      platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: offsetX - 25, y: offsetY, xLen: 50, yLen: this.canvasHeight, context: this.context })
+    break;
+  }
+  this.platforms.push(platform);
+  this.entities.push(platform);
+
+}
+
+const roomOne = function() {
+  //basic square
+  wall.call(this, 'top', 0, 0);
+  wall.call(this, 'bottom', 0, this.canvasHeight);
+  wall.call(this, 'left', 0, 0);
+  wall.call(this, 'right', this.canvasWidth, 100);
+
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth / 2 - 100, y: this.canvasHeight - 100, xLen: this.canvasWidth / 2 + 100, yLen: 75, context: this.context })
   this.platforms.push(this.platform);
   this.entities.push(this.platform);
 
-  this.platform2 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 400, y: 0, xLen: 25, yLen: 200, context: this.context })
-  this.platforms.push(this.platform2);
-  this.entities.push(this.platform2);
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: this.canvasHeight - 175, xLen: this.canvasWidth / 2 , yLen: 25, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
 
-  this.platform3 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 500, y: 0, xLen: 4425, yLen: 25, context: this.context })
-  this.platforms.push(this.platform3);
-  this.entities.push(this.platform3);
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 100, y: this.canvasHeight - 250, xLen: this.canvasWidth / 2  - 200, yLen: 25, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
+
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 300, y: this.canvasHeight - 325, xLen: this.canvasWidth / 2  - 250, yLen: 25, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
+
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 450, y: this.canvasHeight - 400, xLen: this.canvasWidth / 2  - 250, yLen: 25, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
+
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 550, y: this.canvasHeight - 475, xLen: this.canvasWidth / 2  - 250, yLen: 25, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
+
+}
+
+const roomTwo = function() {
+  wall.call(this, 'top', this.canvasWidth * 1, 0);
+  wall.call(this, 'bottom', this.canvasWidth * 1, this.canvasHeight);
+  wall.call(this, 'right', this.canvasWidth * 2, 100);
 
 
-  this.platform4 = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: 0, y: -400, xLen: 4425, yLen: 25, context: this.context })
-  this.platforms.push(this.platform4);
-  this.entities.push(this.platform4);
-
-  // this.box = new GameEntity(Object.assign({}, playerConfig, {
-  //   x: 255,
-  //   y: 205
-  // }));
-  // this.entities.push(this.box);
-  // this.physicsObjs.push(this.box);
-
+  this.platform = new _platform_js__WEBPACK_IMPORTED_MODULE_3__["default"]({ x: this.canvasWidth * 1 + 300, y: 0, xLen: 25, yLen: this.canvasHeight - 200, context: this.context })
+  this.platforms.push(this.platform);
+  this.entities.push(this.platform);
 
 }
 
