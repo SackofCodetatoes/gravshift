@@ -150,10 +150,15 @@ class Display {
   render(){
     //create request animation loop
     this.context.clearRect(0, 0, 1280, 720);
-
-    this.context.drawImage(this.grid, 16, 282, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
+    // debugger
+    this.context.drawImage(this.grid, 0, 0, 1920, 1920, -this.viewPort.x, -1280 - this.viewPort.y, 1920, 1920);
+    // this.context.drawImage(this.grid, 0, 0, 1920, 1920, -this.viewPort.x, -this.viewPort.y, 1920, 1920);
 
     this.game.update(this.viewPort);
+    this.context.font = "30px Arial";
+    this.context.fillStyle = 'white'
+    this.context.fillText("Congradulations, You did it!", 1280 + 140  - this.viewPort.x, -1280 + 200 - this.viewPort.y)
+
 
     requestAnimationFrame(() => this.render());
   }
@@ -179,7 +184,8 @@ __webpack_require__.r(__webpack_exports__);
 
 const display = new _display_js__WEBPACK_IMPORTED_MODULE_0__["default"]();
 const grid = new Image();
-grid.src = "./images/grid.png";
+// grid.src = "./images/grid.png";
+grid.src = "./images/space.jpg";
 display.grid = grid;
 grid.onload = display.render;
 
@@ -302,7 +308,6 @@ class Game {
         this.viewTransition.dir = 'up';
         this.viewTransition.target = viewPort.y - this.canvasHeight;
       }
-
     }
 
     if(this.viewTransition.dir === 'left' || this.viewTransition.dir === 'right'){
@@ -341,7 +346,6 @@ class Game {
           this.viewTransition.target = 0;
         }
       }
-
     }
   }
   
@@ -595,7 +599,7 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }// end of keybind
 
   draw(viewPort){
-    this.context.fillStyle = 'blue';
+    this.context.fillStyle = 'lightgrey';
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, 25, 25);
   }
 

@@ -101,7 +101,6 @@ class Game {
         this.viewTransition.dir = 'up';
         this.viewTransition.target = viewPort.y - this.canvasHeight;
       }
-
     }
 
     if(this.viewTransition.dir === 'left' || this.viewTransition.dir === 'right'){
@@ -140,7 +139,6 @@ class Game {
           this.viewTransition.target = 0;
         }
       }
-
     }
   }
   

@@ -23,10 +23,15 @@ class Display {
   render(){
     //create request animation loop
     this.context.clearRect(0, 0, 1280, 720);
-
-    this.context.drawImage(this.grid, 16, 282, 1584, 1020, -this.viewPort.x, -this.viewPort.y, 1584, 1020);
+    // debugger
+    this.context.drawImage(this.grid, 0, 0, 1920, 1920, -this.viewPort.x, -1280 - this.viewPort.y, 1920, 1920);
+    // this.context.drawImage(this.grid, 0, 0, 1920, 1920, -this.viewPort.x, -this.viewPort.y, 1920, 1920);
 
     this.game.update(this.viewPort);
+    this.context.font = "30px Arial";
+    this.context.fillStyle = 'white'
+    this.context.fillText("Congradulations, You did it!", 1280 + 140  - this.viewPort.x, -1280 + 200 - this.viewPort.y)
+
 
     requestAnimationFrame(() => this.render());
   }

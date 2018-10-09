@@ -46,7 +46,7 @@ class Player extends GameEntity {
   }// end of keybind
 
   draw(viewPort){
-    this.context.fillStyle = 'blue';
+    this.context.fillStyle = 'lightgrey';
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, 25, 25);
   }
 
