@@ -33,8 +33,11 @@ class Game {
   initialize(){
     //game init
     let playerConfig = {
-      x: 50 + this.canvasWidth * 1 + 200,
-      y: 500 - this.canvasHeight * 2,
+      x: 50 ,
+      y: 500 ,
+      //for testing
+      // x: 50 + this.canvasWidth * 1 + 200,
+      // y: 500 - this.canvasHeight * 2,
       xLen: 25,
       yLen: 25,
       context: this.context,

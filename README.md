@@ -9,11 +9,11 @@ A short gravity based puzzle game
 
 
 items to add
-- death zones left, top, bottom
-- left deadzone moves right until player enters next region
+- add hazzards
+- add checkpoint system
 - start screen where player can move
 - start game button
-- shift screen rigth whenever moving right
+
 - add entry platforms/tunnels
 - add red zone in all rooms which resets 
 - add a timer
