@@ -1,6 +1,6 @@
 #GravShift
 
-[Live Demo]()
+[Live Demo](https://sackofcodetatoes.github.io/gravshift/)
 
 ![GravShift Preview]()
 
