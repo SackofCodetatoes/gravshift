@@ -8,6 +8,7 @@ class GameEntity {
     this.vspd = 0;
     this.hspd = 0;
     this.physicsObj = false || options.physicsObj;
+    this.defaultColor = options.color;
 
     this.context = options.context;
     this.platformCollision = options.platformCollision;
@@ -20,7 +21,7 @@ class GameEntity {
 
   draw(viewPort){
     //check if sprite, else draw green
-    this.context.fillStyle = 'green';
+    this.context.fillStyle = this.defaultColor || 'green';
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, this.xLen, this.yLen);
   }
 

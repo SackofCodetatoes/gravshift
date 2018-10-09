@@ -227,6 +227,7 @@ class Game {
 
    this.platformCollision = this.platformCollision.bind(this);
    this.physicsCollision = this.physicsCollision.bind(this);
+   this.viewTransitionCheck = this.viewTransitionCheck.bind(this);
   }
 
 
@@ -269,6 +270,19 @@ class Game {
   update(viewPort){
     //each game step
     this.applyGravity();
+    
+
+    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+    //   //restart
+    // }
+
+    this.viewTransitionCheck.call(this, viewPort);
+    for(let i = 0; i < this.entities.length; i++){
+      this.entities[i].update(viewPort);
+    }
+
+  }
+  viewTransitionCheck(viewPort){
 
     //if not camera transitioning, set transition state
     if(this.viewTransition.dir === 'none'){
@@ -329,15 +343,6 @@ class Game {
       }
 
     }
-
-    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
-    //   //restart
-    // }
-
-    for(let i = 0; i < this.entities.length; i++){
-      this.entities[i].update(viewPort);
-    }
-
   }
   
   viewTransitionStep(viewTransition, viewPort){
@@ -440,6 +445,7 @@ class GameEntity {
     this.vspd = 0;
     this.hspd = 0;
     this.physicsObj = false || options.physicsObj;
+    this.defaultColor = options.color;
 
     this.context = options.context;
     this.platformCollision = options.platformCollision;
@@ -452,7 +458,7 @@ class GameEntity {
 
   draw(viewPort){
     //check if sprite, else draw green
-    this.context.fillStyle = 'green';
+    this.context.fillStyle = this.defaultColor || 'green';
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, this.xLen, this.yLen);
   }
 
@@ -521,6 +527,7 @@ __webpack_require__.r(__webpack_exports__);
 class Platform extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(options){
     super(options);
+    this.defaultColor = 'gray'
   }
 
 

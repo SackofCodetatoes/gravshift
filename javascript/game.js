@@ -26,6 +26,7 @@ class Game {
 
    this.platformCollision = this.platformCollision.bind(this);
    this.physicsCollision = this.physicsCollision.bind(this);
+   this.viewTransitionCheck = this.viewTransitionCheck.bind(this);
   }
 
 
@@ -68,6 +69,19 @@ class Game {
   update(viewPort){
     //each game step
     this.applyGravity();
+    
+
+    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
+    //   //restart
+    // }
+
+    this.viewTransitionCheck.call(this, viewPort);
+    for(let i = 0; i < this.entities.length; i++){
+      this.entities[i].update(viewPort);
+    }
+
+  }
+  viewTransitionCheck(viewPort){
 
     //if not camera transitioning, set transition state
     if(this.viewTransition.dir === 'none'){
@@ -128,15 +142,6 @@ class Game {
       }
 
     }
-
-    // if(this.player.x - viewPort.x < 0 || this.player.y > 720 || this.player.y < 0){
-    //   //restart
-    // }
-
-    for(let i = 0; i < this.entities.length; i++){
-      this.entities[i].update(viewPort);
-    }
-
   }
   
   viewTransitionStep(viewTransition, viewPort){
