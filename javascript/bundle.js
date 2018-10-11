@@ -567,9 +567,12 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.platformCollision = options.platformCollision;
     
     this.state = 'moving';
-
-
+    
+    
     this.takeInput = this.takeInput.bind(this);
+    
+    this.gravIcon = document.getElementById("grav-icon");
+    this.jumpIcon = document.getElementById("jump-icon");
   }
 
   keyBind() {
@@ -599,6 +602,8 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
       }
     });
 
+
+
   }// end of keybind
 
   draw(viewPort){
@@ -617,10 +622,14 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if(this.playerInput[' '] && this.playerInput.canJump){
       this.vspd = this.jumpSpd * -this.game.gravDir;
       this.playerInput.canJump = false;
+      this.jumpIcon.style.filter = "opacity(0.5)"
+
     }
     if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
       this.game.gravDir = this.game.gravDir * -1;
       this.playerInput.canInvert = false;
+      this.gravShift.style.filter = ("opacity 100");
+      // most likley to be
     }
   }
 
@@ -633,6 +642,10 @@ class Player extends _game_entity_js__WEBPACK_IMPORTED_MODULE_0__["default"] {
     if (this.platformCollision(this.x, this.y + (1 * this.game.gravDir), this) || this.physicsCollision(this.x, this.y + (1 * this.game.gravDir), this)) {
       this.playerInput.canJump = true;
       this.playerInput.canInvert = true;
+
+      this.gravShift.style.fiter = "opacity 300"
+      this.thi.style.fiter = "opacity 300"
+
     }
     
 
