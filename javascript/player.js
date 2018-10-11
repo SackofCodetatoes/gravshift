@@ -72,7 +72,7 @@ class Player extends GameEntity {
     if(this.playerInput.ArrowUp && this.playerInput.canInvert) {
       this.game.gravDir = this.game.gravDir * -1;
       this.playerInput.canInvert = false;
-      this.gravShift.style.filter = ("opacity 100");
+      this.gravIcon.style.filter = "opacity(0.5)";
       // most likley to be
     }
   }
@@ -87,12 +87,10 @@ class Player extends GameEntity {
       this.playerInput.canJump = true;
       this.playerInput.canInvert = true;
 
-      this.gravShift.style.fiter = "opacity 300"
-      this.thi.style.fiter = "opacity 300"
+      this.gravIcon.style.filter = "opacity(1)"
+      this.jumpIcon.style.filter = "opacity(1)"
 
     }
-    
-
     this.draw(viewPort);
   }
 

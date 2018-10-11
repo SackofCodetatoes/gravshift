@@ -1,8 +1,9 @@
 .game-ui {
   width: 40%;
+  
 }
 .game-ui-key img{
- width: 64px;
+ height: 64px;
 }
 
 .game-ui {
