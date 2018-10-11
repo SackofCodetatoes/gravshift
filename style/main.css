@@ -1,14 +1,60 @@
-.game-ui {
-  width: 40%;
-  
-}
 .game-ui-key img{
- height: 64px;
+  height: 48px;
+  margin: 10px;
 }
-
+body {
+  text-align: center;
+  background-color: #D8D8D8;
+}
 .game-ui {
+  width: 300px;
+  display: flex;
+  margin-left: 10px;
   display: inline-block;
   border: 1px solid black;
+  border-radius: 5px;
   position: absolute;
-  top: 0;
+  top: 80px;
+}
+.game-ui-key {
+  display: flex;
+}
+.key-text {
+  flex-direction: row;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: 20px;
+}
+.description {
+  margin-left: 10px;
+  border: 1px black solid;
+  border-radius: 5px;
+  width: 300px;
+  display: inline-block;
+  position: absolute;
+  top: 400px;
+}
+.flex-parent{
+  display: flex;
+}
+.flex-parent a{
+  flex-direction: row;
+  margin-right: auto;
+  margin-left: auto;
+  text-decoration: none;
+  color: black;
+}
+.flex-parent a:hover{
+  filter: invert(1);
+  cursor: pointer;
+}
+.github-icon{
+  margin-left: 20px;
+}
+.game-canvas{
+  display: inline-block;
+}
+*{
+  font-family: 'Press Start 2P', cursive;
+  line-height: 1.3;
 }

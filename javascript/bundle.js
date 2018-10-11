@@ -465,7 +465,7 @@ class GameEntity {
 
   draw(viewPort){
     //check if sprite, else draw green
-    this.context.fillStyle = this.defaultColor || 'green';
+    this.context.fillStyle = this.defaultColor || '#A9F5A9';
     this.context.fillRect(this.x - viewPort.x, this.y - viewPort.y, this.xLen, this.yLen);
   }
 

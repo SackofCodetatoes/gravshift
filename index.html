@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Game Mechanics</title>
+  <title>Gravity Shift</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
   <link rel="stylesheet" type="text/css" media="screen" href="style/main.css" />
 </head>
 <body>
   <h1>Gravity Shift</h1>
   <canvas id="game-canvas" width="640" height="640"></canvas>
   <div class="game-ui">
+    <h2 class="controls-header">Controls</h2>
     <div class="game-ui-key">
       <img id="grav-icon" class="key-icon" src="images/up_arrow_icon.png" alt="">
       <label class="key-text">Change Gravity</label>
@@ -24,6 +26,15 @@
       <img src="images/right_arrow_key.png">
       <label class="key-text">Move</label>
     </div>
+  </div>
+  <div class="description">
+    <h2>About</h2>
+    <p>Gravity Shift is puzzle platforming game. The goal is to figure your way through each room. Good luck!</p>
+    <div class="flex-parent">
+      <a class="game-ui-key" href="https://github.com/SackofCodetatoes/gravshift" target="_blank">
+        <img class="github-icon" src="images/github-logo.png" alt=""><label class="key-text">Github</label>
+      </a>
+    </div> 
   </div>
 </body>
 <script src="javascript/bundle.js"></script>
