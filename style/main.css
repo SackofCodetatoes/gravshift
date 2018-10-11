@@ -1,0 +1,13 @@
+.game-ui {
+  width: 40%;
+}
+.game-ui-key img{
+ width: 64px;
+}
+
+.game-ui {
+  display: inline-block;
+  border: 1px solid black;
+  position: absolute;
+  top: 0;
+}
